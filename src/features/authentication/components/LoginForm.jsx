@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../app/providers/authProvider';
 
 export default function LoginForm() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [usuario, setUsuario] = useState('');
+  const [contrasena, setContrasena] = useState('');
   const { login, loading, error } = useAuth();
    const navigate = useNavigate();
   
@@ -12,7 +12,7 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login({ username, password });
+      await login({ usuario, contrasena });
       console.log('Login exitoso!');
       navigate('/dashboard');
 
@@ -49,8 +49,8 @@ export default function LoginForm() {
             <input
               type="text"
               maxLength={20}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
               placeholder="Ingresa tu usuario registrado"
               className="w-full px-4 py-2 mt-1 rounded bg-white text-black"
               required
@@ -60,10 +60,10 @@ export default function LoginForm() {
           <div>
             <label className="block text-sm">Contraseña</label>
             <input
-              type="password"
+              type="contrasena"
               minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={contrasena}
+              onChange={(e) => setContrasena(e.target.value)}
               placeholder="Ingresa tu contraseña registrada"
               className="w-full px-4 py-2 mt-1 rounded bg-white text-black"
               required
@@ -71,7 +71,7 @@ export default function LoginForm() {
             <p className="text-xs mt-1">Mínimo 8 caracteres</p>
           </div>
           <div className="flex justify-end">
-             <Link to="/forgot-password" className="text-sm underline">
+             <Link to="/forgot-contrasena" className="text-sm underline">
               ¿Olvidaste tu contraseña?
             </Link>
           </div>

@@ -2,14 +2,14 @@
 
 const API_BASE_URL = 'http://localhost:8080'; // Reemplaza con tu URL real
 
-export const registerUser = async (userData) => {
+export const registerUser = async (formData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/users`, {
+    const response = await fetch(`${API_BASE_URL}/users/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(userData),
+      body: JSON.stringify(formData),
     });
 
     if (!response.ok) {

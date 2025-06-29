@@ -2,9 +2,9 @@ import React from 'react';
 import {BrowserRouter,Routes,Route,Navigate} from 'react-router-dom';
 import { useAuth } from '../providers/authProvider';
 import LoginForm from '../../features/authentication/components/LoginForm';
+import RegisterPage from '../../features/auth/pages/RegisterPage';
 
-// componentes “simulados” para las otras rutas
-const RegisterPage = () => <h2 className="p-8 text-center">🔧 Página de Registro (simulada)</h2>;
+// componentes “simulados” para las otras \
 const ForgotPasswordPage = () => <h2 className="p-8 text-center">🔧 Recuperar Contraseña (simulada)</h2>;
 const DashboardPage = () => <h2 className="p-8 text-center">✅ Dashboard (simulado)</h2>;
 

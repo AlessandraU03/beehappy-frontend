@@ -1,50 +1,32 @@
-const mockUsers = [
-  {
-    id: '1',
-    username: 'admin',
-    password: '12345678',
-    email: 'admin@beehappy.com',
-    name: 'Administrador BeeHappy'
-  },
-  {
-    id: '2',
-    username: 'usuario',
-    password: 'password123',
-    email: 'usuario@beehappy.com',
-    name: 'Usuario Demo'
-  }
-];
 
 export const authApi = {
-
   login: async (credentials) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-   
-    const user = mockUsers.find(
-      u => u.username === credentials.username && u.password === credentials.password
-    );
-    
-    if (!user) {
-      throw new Error('Credenciales inválidas');
+    const response = await fetch('http://localhost:8080/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        usuario: credentials.usuario,
+        contrasena: credentials.contrasena,
+      }),
+      // You can log credentials here if needed
+    });
+
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Error al iniciar sesión');
     }
+
+    const data = await response.json();
+
     
-  
-    return {
-      token: `mock-token-${Date.now()}`,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        name: user.name
-      }
-    };
+    return data;
   },
 
- 
   logout: async () => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    // En la API real aquí se invalidaría el token
-    console.log('Mock logout - token invalidated');
+    // Implementación futura si decides invalidar el token en backend
+    console.log('Logout solicitado - sin efecto en backend por ahora');
   }
 };
