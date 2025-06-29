@@ -4,9 +4,9 @@ import React from 'react';
 // import BeeIcon from '../../../assets/bee-icon.png';
 // import HexagonPattern from '../../../assets/hexagon-pattern.svg';
 
-const AuthLayout = ({ children }) => {
+function AuthLayout({ children }) {
   return (
-    <div className="min-h-screen flex relative overflow-hidden bg-gradient-to-r from-bh-yellow to-bh-dark-blue
+    <div className="min-h-screen flex relative overflow-hidden bg-gradient-to-r from-[#FFD700] to-[#1A2B4C]
                     md:flex-row flex-col"> {/* Responsive column on small screens */}
       {/* Yellow Side */}
       <div className="relative flex-1 flex justify-center items-center md:min-h-screen min-h-[30vh]">
@@ -32,7 +32,7 @@ const AuthLayout = ({ children }) => {
       </div>
 
       {/* Dark Blue Side */}
-      <div className="flex-1 flex justify-center items-center p-5 bg-bh-dark-blue md:min-h-screen min-h-[70vh]">
+      <div className="flex-1 flex justify-center items-center p-5 bg-[#1A2B4C] md:min-h-screen min-h-[70vh]">
         {children}
       </div>
     </div>
