@@ -1,7 +1,7 @@
 
 export const authApi = {
   login: async (credentials) => {
-    const response = await fetch('http://localhost:8080/users/login', {
+    const response = await fetch('http://localhost:8080/api/v1/users/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -25,8 +25,14 @@ export const authApi = {
     return data;
   },
 
-  logout: async () => {
-    // Implementación futura si decides invalidar el token en backend
-    console.log('Logout solicitado - sin efecto en backend por ahora');
-  }
+  logout: () => {
+    // Aquí eliminas cualquier dato de sesión o token guardado
+    sessionStorage.removeItem('token');  // o el nombre que uses
+    // Si usas cookies u otro almacenamiento, también debes limpiar ahí
+  },
+
+  getCurrentUsuario: () => {
+    // Aquí puedes obtener el usuario actual desde el almacenamiento de sesión o cookies
+    return sessionStorage.getItem('usuario'); // o el nombre que uses
+  },
 };

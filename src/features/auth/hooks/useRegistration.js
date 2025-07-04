@@ -10,6 +10,7 @@ const useRegistration = (onSuccess) => {
     usuario: '',
     correo_electronico: '',
     contrasena: '',
+    rol: 'apicultor', // Valor por defecto y oculto
   });
 
   const [errors, setErrors] = useState({});
@@ -18,8 +19,12 @@ const useRegistration = (onSuccess) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Protege el campo 'rol' para que no se sobrescriba accidentalmente
+    if (name === 'rol') return;
+
     setFormData((prevData) => ({ ...prevData, [name]: value }));
-    // Clear error for the field as user types
+
     if (errors[name]) {
       setErrors((prevErrors) => ({ ...prevErrors, [name]: undefined }));
     }
@@ -27,28 +32,27 @@ const useRegistration = (onSuccess) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setRegistrationError(null); // Clear previous API errors
+    setRegistrationError(null);
 
     const validationErrors = validateRegistrationForm(formData);
     setErrors(validationErrors);
 
-    if (Object.keys(validationErrors).length > 0) {
-      return; // Stop if there are validation errors
-    }
+    if (Object.keys(validationErrors).length > 0) return;
 
     setIsSubmitting(true);
     try {
-      const response = await registerUser(formData);
-      // Assuming API returns some user data on success
+      // Reasegura que se envíe el rol por si algo lo limpió
+      const safeData = { ...formData, rol: 'apicultor' };
+
+      const response = await registerUser(safeData);
       console.log('API Response:', response);
-      if (onSuccess) {
-        onSuccess(response.data); // Pass successful data to parent
-      }
-      // Optionally reset form: setFormData(...)
+
+      if (onSuccess) onSuccess(response.data);
     } catch (error) {
       console.error('Registration failed:', error);
-      // Handle API errors (e.g., username already taken, invalid email format from server)
-      setRegistrationError(error.response?.data?.message || 'Error al registrarte. Intenta de nuevo.');
+      setRegistrationError(
+        error.response?.data?.message || 'Error al registrarte. Intenta de nuevo.'
+      );
     } finally {
       setIsSubmitting(false);
     }
