@@ -41,26 +41,28 @@ const Home = () => {
                     <HiveSummaryCard number={summary.completed} label="Alertas completadas" />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                    <AlertList alerts={alerts} />
-                    <div className="flex flex-col gap-4">
-                        <Button onClick={() => navigate('/formulario-colmena')}>
-                            <div className="flex items-center justify-center gap-2">
-                                <FaPlus /> Agregar colmena
-                            </div>
-                        </Button>
-                        <Button onClick={() => navigate('/estadisticas')}> {/* Usar navigate */}
-                            <div className="flex items-center justify-center gap-2">
-                                <FaChartLine /> Ver estadísticas
-                            </div>
-                        </Button>
-                        <Button onClick={() => navigate('/monitoreo')}> {/* Usar navigate */}
-                            <div className="flex items-center justify-center gap-2">
-                                <FaTv /> Ir al monitoreo en tiempo real
-                            </div>
-                        </Button>
-                    </div>
-                </div>
+               <div className="grid md:grid-cols-2 gap-4 h-full items-stretch">
+  <AlertList alerts={alerts} />
+
+  <div className="flex flex-col gap-4 h-full  "  >
+    <Button variant='secondary'  className="h-full flex-1 " onClick={() => navigate('/formulario-colmena')}>
+      <div className="flex items-center justify-start gap-2 px-4 font-poppins font-semibold text-3xl ">
+        <img src="/add-colmena.png" alt="add-colmena" className="w-14 h-14" />Agregar colmena
+      </div>
+    </Button>
+    <Button variant='secondary' className="h-full flex-1" onClick={() => navigate('/estadisticas')}>
+      <div className="flex items-center justify-start gap-2 px-4 font-poppins font-semibold text-3xl">
+        <img src="/view-stics.png" alt="view" className="w-14 h-14 " /> Ver estadísticas
+      </div>
+    </Button>
+    <Button variant='secondary' className="h-full flex-1" onClick={() => navigate('/monitoreo')}>
+      <div className="flex items-center justify-start gap-2 px-4 font-poppins font-semibold text-3xl ">
+        <img src="/view-mont.png" alt="go" className="w-14 h-14" /> Ir al monitoreo en tiempo real
+      </div>
+    </Button>
+  </div>
+</div>
+
             </main>
         </div>
     );

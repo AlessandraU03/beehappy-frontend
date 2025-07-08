@@ -1,7 +1,7 @@
 import React from 'react';
 
 const AlertList = ({ alerts }) => (
-  <div className="bg-blue-900 text-white border-2 border-yellow-400 p-4 rounded-lg">
+  <div className="bg-[#0C3F72] text-white p-4 rounded-lg shadow-lg">
     <h3 className="text-xl mb-4 font-bold">Últimas alertas</h3>
     {alerts.map((alert, idx) => (
       <div key={idx} className="mb-2">

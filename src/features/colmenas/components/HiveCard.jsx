@@ -8,7 +8,7 @@ const HiveCard = ({ hive, onClick }) => {
             onClick={() => onClick(hive.id)}
         >
             {/* Left Section (Dark Blue) */}
-            <div className="flex-shrink-0 flex items-center justify-center w-1/4 bg-blue-950 text-white p-4">
+            <div className="flex-shrink-0 flex items-center justify-center w-1/4 bg-[#0B1D31] text-white p-4">
                 <div className="text-6xl font-bold">{hive.id}</div> {/* Assuming hive.id will be '1' for this specific card */}
             </div>
 

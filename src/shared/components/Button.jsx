@@ -13,7 +13,7 @@ const Button = ({ children, onClick, type = 'button', disabled, variant = 'prima
     buttonClasses += ` bg-[#2A4D69] text-white hover:bg-[#203e54] shadow-md`;
   } else if (variant === 'secondary') {
     // Estilo de tu botón original si lo necesitas en otro lugar
-    buttonClasses += ` bg-yellow-400 text-[#1A2B4C] hover:bg-[#FFD700]`;
+    buttonClasses += ` bg-[#F7B440] text-[#1A2B4C] hover:bg-[#FFD700]`;
   }
   // Puedes añadir más variantes si es necesario
 

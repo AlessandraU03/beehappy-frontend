@@ -10,7 +10,7 @@ import SensorChart from './SensorChart';
 
 function Graficas() {
   const { hiveId } = useParams();
-  const [sensorHistory, setSensorHistory] = useState([]); 
+  const [sensorHistory, setSensorHistory] = useState([]);
   const [hiveInfo, setHiveInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,11 +32,9 @@ function Graficas() {
         setLoading(false);
         setError(null);
 
-        // Conexión WebSocket
         connectToHiveWS(hiveId);
 
-        // Escuchar datos en tiempo real
-        subscribeToHiveUpdates((data) => {
+        subscribeToHiveUpdates(data => {
           setSensorHistory(prev => {
             const timestamp = new Date();
             const newData = {
@@ -46,7 +44,6 @@ function Graficas() {
               weight: data.weight,
               sound: data.sound,
             };
-            // Mantener solo los últimos 20 puntos
             const updatedHistory = [...prev, newData].slice(-20);
             return updatedHistory;
           });
@@ -72,38 +69,40 @@ function Graficas() {
   return (
     <div className="p-6 bg-blue-800 bg-opacity-70 rounded-lg shadow-xl text-white max-w-6xl mx-auto">
       <h2 className="text-3xl font-bold mb-6 text-center">
-        Monitoreo Detallado: Colmena {hiveInfo.id} ({hiveInfo.area} - {hiveInfo.type})
+        Monitoreo Detallado: {hiveInfo.name || `Colmena ${hiveInfo.id}`} ({hiveInfo.area} - {hiveInfo.type})
       </h2>
 
-     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-  <SensorChart
-    title="Temperatura (°C)"
-    dataKey="temperature"
-    data={sensorHistory}
-    strokeColor="#facc15"
-  />
-  <SensorChart
-    title="Humedad (%)"
-    dataKey="humidity"
-    data={sensorHistory}
-    strokeColor="#60a5fa"
-    yDomain={[0, 100]}
-  />
-  <SensorChart
-    title="Peso (kg)"
-    dataKey="weight"
-    data={sensorHistory}
-    strokeColor="#34d399"
-  />
-  <SensorChart
-    title="Sonido (dB)"
-    dataKey="sound"
-    data={sensorHistory}
-    strokeColor="#a78bfa"
-  />
-</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <SensorChart
+          title="Temperatura (°C)"
+          dataKey="temperature"
+          data={sensorHistory}
+          strokeColor="#facc15"
+        />
+        <SensorChart
+          title="Humedad (%)"
+          dataKey="humidity"
+          data={sensorHistory}
+          strokeColor="#60a5fa"
+          yDomain={[0, 100]}
+        />
+        <SensorChart
+          title="Peso (kg)"
+          dataKey="weight"
+          data={sensorHistory}
+          strokeColor="#34d399"
+        />
+        <SensorChart
+          title="Sonido (dB)"
+          dataKey="sound"
+          data={sensorHistory}
+          strokeColor="#a78bfa"
+        />
+      </div>
 
-      <p className="text-sm text-gray-300 text-right mt-4">Última actualización: {sensorHistory[sensorHistory.length - 1].time}</p>
+      <p className="text-sm text-gray-300 text-right mt-4">
+        Última actualización: {sensorHistory[sensorHistory.length - 1].time}
+      </p>
     </div>
   );
 }

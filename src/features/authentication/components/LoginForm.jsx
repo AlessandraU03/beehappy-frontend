@@ -60,7 +60,7 @@ export default function LoginForm() {
           <div>
             <label className="block text-sm">Contraseña</label>
             <input
-              type="contrasena"
+              type="password"
               minLength={8}
               value={contrasena}
               onChange={(e) => setContrasena(e.target.value)}
