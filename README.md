@@ -32,7 +32,7 @@ yarn install
 npm run dev       # Inicia el servidor de desarrollo
 npm run build     # Compila la app para producción
 npm run preview   # Previsualiza la build de producción
-npm run lint      # Ejecuta ESLint para análisis estático
+
 ```
 
 ## 🧩 Dependencias
@@ -78,13 +78,5 @@ npm run lint      # Ejecuta ESLint para análisis estático
 - 🧾 **html2pdf.js** para generación de PDFs
 - 🎨 Íconos: `@heroicons/react`, `lucide-react`, `react-icons`
 
-## 📁 Estructura Sugerida
 
-```
-src/
-├── components/
-├── pages/
-├── App.jsx
-└── main.jsx
-```
 
