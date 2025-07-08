@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../providers/authProvider';
 import LoginForm from '../../features/authentication/components/LoginForm';
 import RegisterPage from '../../features/auth/pages/RegisterPage';
-import PasswordResetView from '../../features/auth/pages/PasswordResetView';
+import ValidateCodeVerification from '../../features/auth/pages/ValidateCodeVerification';
 
 import Home from '../../features/dashboard/pages/Home';
 import Colmenas from '../../features/colmenas/pages/Colmenas';
@@ -30,7 +30,7 @@ export default function AppRouter() {
         <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginForm />} />
         <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginForm />} />
         <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />} />
-        <Route path="/forgot-contrasena" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <PasswordResetView />} />
+        <Route path="/forgot-contrasena" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <ValidateCodeVerification />} />
         <Route path="/set-new-password" element={<ResetPasswordSection />} />
 
         {/* Rutas protegidas */}

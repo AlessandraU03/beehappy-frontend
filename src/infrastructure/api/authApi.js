@@ -1,7 +1,7 @@
 
 export const authApi = {
   login: async (credentials) => {
-    const response = await fetch('http://localhost:8080/api/v1/users/login', {
+    const response = await fetch('http://44.196.168.136:8080/api/v1/users/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
