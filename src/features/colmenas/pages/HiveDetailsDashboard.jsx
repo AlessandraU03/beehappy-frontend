@@ -8,6 +8,7 @@ import {
   subscribeToHiveUpdates,
   disconnectFromHiveWS
 } from '../../../shared/services/wsService';
+import TabsNav from '../../../shared/components/TabsNav';
 
 function HiveDetailDashboard() {
   const { hiveId } = useParams();
@@ -79,27 +80,17 @@ function HiveDetailDashboard() {
   if (!hiveInfo) return <div className="text-white text-center text-xl mt-8">No se encontró información para esta colmena.</div>;
 
   return (
+    <div className='p-8'>
+     <TabsNav activeTab={activeTab} setActiveTab={handleTabClick}  />
+     
     <div className="p-6 bg-blue-900 bg-opacity-80 rounded-lg shadow-xl text-white max-w-6xl mx-auto">
-      {/* Botón Volver */}
+          
       
 
       <h2 className="text-4xl font-bold mb-4 text-center">Colmena {hiveInfo.id}</h2>
       <p className="text-xl text-center mb-6">Área: {hiveInfo.area} | Tipo: {hiveInfo.type}</p>
 
-      {/* Navegación por pestañas */}
-      <div className="flex justify-center border-b border-gray-700 mb-8">
-        {['general', 'monitoreo-tiempo-real', 'estadisticas', 'alertas'].map(tab => (
-          <button
-            key={tab}
-            className={`py-3 px-6 text-lg font-semibold rounded-t-lg transition-colors duration-200 ${
-              activeTab === tab ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-800'
-            }`}
-            onClick={() => handleTabClick(tab)}
-          >
-            {tab.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-          </button>
-        ))}
-      </div>
+
 
       <div className="tab-content">
         {activeTab !== 'general' ? (
@@ -157,6 +148,7 @@ function HiveDetailDashboard() {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }

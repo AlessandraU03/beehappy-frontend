@@ -10,7 +10,7 @@ const useRegistration = (onSuccess) => {
     usuario: '',
     correo_electronico: '',
     contrasena: '',
-    rol: 'apicultor', // Valor por defecto y oculto
+    rol: 'apicultor', 
   });
 
   const [errors, setErrors] = useState({});

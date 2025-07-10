@@ -1,21 +1,18 @@
 // shared/components/Sidebar.tsx
 import { NavLink } from "react-router-dom";
-import {
-  FiHome,
-  FiSettings,
-  FiBarChart2,
-  FiMonitor,
-  FiBell,
-} from "react-icons/fi";
-import { PiSquaresFourLight } from "react-icons/pi"; // Colmenas
 import logo from "/BeeHappy 1.png"; // Asegúrate de tener el logo aquí
 
 const navItems = [
-  { to: "/", label: "Inicio", icon: <FiHome /> },
-  { to: "/colmenas", label: "Colmenas", icon: <PiSquaresFourLight /> },
-  { to: "/estadisticas", label: "Estadísticas", icon: <FiBarChart2 /> },
-  { to: "/monitoreo", label: "Monitoreo", icon: <FiMonitor /> },
-  { to: "/alertas", label: "Alertas", icon: <FiBell /> },
+  { to: "/", label: "Inicio", icon: <img src="/home-icon.png" alt="Inicio" className="w-6 h-6" /> },
+{ 
+  to: "/colmenas", 
+  label: "Colmenas", 
+  icon: <img src="/colmena-icon.png" alt="Colmenas" className="w-6 h-6" /> 
+}
+,
+  { to: "/estadisticas", label: "Estadísticas", icon: <img src="/estadisticas-icon.png" alt="Estadísticas" className="w-6 h-6" /> },
+  { to: "/monitoreo", label: "Monitoreo", icon: <img src="/monitoreo-icon.png" alt="Monitoreo" className="w-6 h-6" /> },
+  { to: "/alertas", label: "Alertas", icon: <img src="/alertas-icon.png" alt="Alertas" className="w-6 h-6" /> },
 ];
 
 export function Sidebar() {
@@ -56,8 +53,7 @@ export function Sidebar() {
             }`
           }
         >
-          <FiSettings className="text-xl" />
-          <span className="text-sm">Configuración</span>
+          
         </NavLink>
       </div>
     </aside>

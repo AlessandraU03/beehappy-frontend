@@ -11,7 +11,7 @@ import validateEmail from '../utils/validateEmail';
 import Button from '../../../shared/components/Button';
 import ResetPasswordSection from './ResetPasswordSection';
 
-export default function PasswordResetView() {
+export default function ValidateCodeVerification() {
 
   const navigate = useNavigate();
 

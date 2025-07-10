@@ -1,24 +1,24 @@
-// src/app/router/AppRouter.jsx
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from '../providers/authProvider'; // Asegúrate de que la ruta sea correcta
-import LoginForm from '../../features/authentication/components/LoginForm'; // Asegúrate de que la ruta sea correcta
-import RegisterPage from '../../features/auth/pages/RegisterPage'; // Asegúrate de que la ruta sea correcta
-import PasswordResetView from '../../features/auth/pages/PasswordResetView'; // Asegúrate de que la ruta sea correcta
+import { useAuth } from '../providers/authProvider';
+import LoginForm from '../../features/authentication/components/LoginForm';
+import RegisterPage from '../../features/auth/pages/RegisterPage';
+import ValidateCodeVerification from '../../features/auth/pages/ValidateCodeVerification';
 
-import Home from '../../features/dashboard/pages/Home'; // Esta es tu vista de inicio
-import Colmenas from '../../features/colmenas/pages/Colmenas'; // Esta es tu vista para la lista de colmenas
-import Estadisticas from '../../features/estadisiticas/pages/Estadisticas'; // Página general de estadísticas
-import Monitoreo from '../../features/monitoreo/pages/Monitoreo'; // Esta será la vista para la lista de monitoreo
-import Alertas from '../../features/alertas/pages/Alertas'; // Página general de alertas
+import Home from '../../features/dashboard/pages/Home';
+import Colmenas from '../../features/colmenas/pages/Colmenas';
+import Estadisticas from '../../features/estadisiticas/pages/Estadisticas';
+import Monitoreo from '../../features/monitoreo/pages/Monitoreo';
+import Alertas from '../../features/alertas/pages/Alertas';
 
+import Graficas from '../../features/estadisiticas/components/Graficas';
 
-import Graficas from '../../features/estadisiticas/components/Graficas'; // Renombrado de HiveMonitoringDetail
-
-import MainLayout from '../../shared/layouts/MainLayout'; // Asegúrate de que la ruta sea correcta
+import MainLayout from '../../shared/layouts/MainLayout';
 import HiveDetailDashboard from '../../features/colmenas/pages/HiveDetailsDashboard';
 import FormCreateColmena from '../../features/colmenas/components/FormCreateColmena';
 import ResetPasswordSection from '../../features/auth/pages/ResetPasswordSection';
+import EstadisticasDashboard from '../../features/estadisiticas/pages/EstadisticasDashboard';
+import AlertsDashboard from '../../features/alertas/pages/AlertasDashboard';
 
 export default function AppRouter() {
   const { isAuthenticated } = useAuth();
@@ -27,70 +27,42 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
         {/* Rutas de autenticación */}
-        <Route
-          path="/"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginForm />
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginForm />
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />
-          }
-        />
-        <Route
-          path="/forgot-contrasena"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <PasswordResetView />
-          }
-        />
+        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginForm />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginForm />} />
+        <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />} />
+        <Route path="/forgot-contrasena" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <ValidateCodeVerification />} />
+        <Route path="/set-new-password" element={<ResetPasswordSection />} />
 
-          <Route path="/set-new-password" element={<ResetPasswordSection />} />
-
-
-
-        {/* Rutas Protegidas por MainLayout */}
+        {/* Rutas protegidas */}
         <Route element={isAuthenticated ? <MainLayout /> : <Navigate to="/" replace />}>
           <Route path="/dashboard" element={<Home />} />
-
-          {/* Ruta para la lista general de colmenas */}
           <Route path="/colmenas" element={<Colmenas />} />
 
-          {/* Rutas generales para Estadísticas y Alertas (si existen páginas generales) */}
+          {/* Rutas generales */}
           <Route path="/estadisticas" element={<Estadisticas />} />
           <Route path="/alertas" element={<Alertas />} />
 
-          {/* Ruta para la lista de colmenas para monitoreo (Monitoreo.jsx) */}
+          {/* Monitoreo - lista */}
           <Route path="/monitoreo" element={<Monitoreo />} />
-<Route path='formulario-colmena' element={<FormCreateColmena />} />
-          {/* ¡NUEVAS RUTAS para el Dashboard de Detalle de Colmena! */}
-          {/* Esta es la ruta padre para todas las vistas específicas de una colmena */}
-          <Route path="/colmenas/:hiveId" element={<HiveDetailDashboard />}>
-            {/* Ruta por defecto para la pestaña 'General' (cuando la URL es /colmenas/:hiveId) */}
-            <Route index element={null} /> {/* HiveDetailDashboard renderiza el contenido general por sí mismo */}
-            <Route path="general" element={null} /> {/* Explícitamente para la pestaña 'General' */}
 
-            {/* Rutas anidadas para Monitoreo, Estadísticas y Alertas específicas de la colmena */}
-            {/* Graficas (con WebSocket) se renderizará aquí */}
-            
+          {/* Crear colmena */}
+          <Route path="formulario-colmena" element={<FormCreateColmena />} />
+
+          {/* Detalle colmena con rutas anidadas */}
+          <Route path="/colmenas/:hiveId" element={<HiveDetailDashboard />}>
+            <Route index element={null} /> {/* render por defecto o manejar en HiveDetailDashboard */}
+            <Route path="general" element={null} /> {/* Vista general */}
+            <Route path="estadisticas" element={<EstadisticasDashboard />} />
             <Route path="monitoreo-tiempo-real" element={<Graficas />} />
-            
+            <Route path="alertas" element={<AlertsDashboard />} />
           </Route>
 
-          {/* La ruta antigua "/monitoreo/:hiveId" se elimina o se redirige,
-             ya que la nueva estructura centraliza el detalle bajo /colmenas/:hiveId */}
-          {/* <Route path="/monitoreo/:hiveId" element={<Graficas />} /> */}
-
+          {/* Monitoreo en tiempo real desde /monitoreo */}
+          <Route path="/monitoreo/colmena/:hiveId" element={<Graficas />} />
+          <Route path="/estadisticas/colmena/:hiveId" element={<EstadisticasDashboard />} />
         </Route>
 
-        {/* Ruta para cualquier otra cosa */}
+        {/* Ruta catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
