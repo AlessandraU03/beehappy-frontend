@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
 import Button from '../../../shared/components/Button';
 import Input from '../../../shared/components/Input';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useColmenaForm } from '../hooks/useColmenaForm';
 import { createColmena } from '../services/Create_colmenas';
 import { updateColmena } from '../services/update_colmena';
 import { getColmenaById } from '../services/get_colmena_byID';
-import { useParams } from 'react-router-dom';
 
 const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
   const navigate = useNavigate();
+  const { hiveId } = useParams();
+
   const {
     colmenaId,
     setColmenaId,
@@ -25,13 +26,14 @@ const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
     resetForm,
   } = useColmenaForm();
 
-const { hiveId } = useParams();
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!isEdit) return;
 
-useEffect(() => {
-  const fetchData = async () => {
-    if (isEdit && hiveId && !initialData?.id) {
       try {
         const data = await getColmenaById(hiveId);
+        if (!data) return;
+
         setColmenaId(data.identificador || '');
         setNombreColmena(data.nombre || '');
         setAreaUbicacion(data.area_ubicacion || '');
@@ -45,11 +47,10 @@ useEffect(() => {
       } catch (error) {
         console.error('Error al cargar datos de colmena:', error);
       }
-    }
-  };
+    };
 
-  fetchData();
-}, [hiveId, isEdit, initialData]);
+    fetchData();
+  }, [isEdit, hiveId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,25 +61,24 @@ useEffect(() => {
       area_ubicacion: areaUbicacion,
       tipo_colmena: tipoColmena,
       estado: 'activo',
-      sensores,  // Incluye sensores si el backend los soporta
+      sensores,
     };
 
     try {
-      if (isEdit && initialData?.id) {
-        await updateColmena(initialData.id, colmenaData);
-        navigate(`/colmenas/${initialData.id}`);
+      if (isEdit && hiveId) {
+        await updateColmena(hiveId, colmenaData);
         alert('Colmena actualizada correctamente');
+        navigate(`/colmenas/${hiveId}`);
       } else {
         await createColmena(colmenaData);
-        navigate('/colmenas');
         alert('Colmena creada correctamente');
+        navigate('/colmenas');
       }
 
       resetForm();
       onSubmit?.();
     } catch (error) {
       console.error('Error al guardar colmena:', error);
-
       alert('Hubo un error al guardar la colmena.');
     }
   };
@@ -86,7 +86,7 @@ useEffect(() => {
   const handleCancel = () => {
     resetForm();
     onSubmit?.();
-    navigate('/colmenas'); 
+    navigate('/colmenas');
   };
 
   return (
@@ -108,7 +108,6 @@ useEffect(() => {
               name="identificador"
               value={colmenaId}
               onChange={(e) => setColmenaId(e.target.value)}
-              readOnly={isEdit}
               labelClassName="text-white text-lg capitalize flex-grow"
             />
             <Input
@@ -153,7 +152,6 @@ useEffect(() => {
                   containerClassName="flex items-start p-3 rounded-md border-2 border-white"
                   inputClassName="mr-3"
                   labelClassName="text-white text-lg capitalize flex-grow"
-                  placeholder={`${sensor}`}
                 />
               ))}
             </div>

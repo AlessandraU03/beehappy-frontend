@@ -46,7 +46,7 @@ export default function AppRouter() {
           <Route path="/monitoreo" element={<Monitoreo />} />
 
           {/* Crear colmena */}
-          <Route path="formulario-colmena" element={<FormCreateColmena />} />
+          <Route path="formulario-colmena" element={<FormCreateColmena isEdit={false} />} />
 
           {/* Detalle colmena con rutas anidadas */}
           <Route path="/colmenas/:hiveId" element={<HiveDetailDashboard />}>
