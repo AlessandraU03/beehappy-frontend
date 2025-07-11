@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getHivesForMonitoring } from '../../monitoreo/services/hiveService';
+import { getHives } from '../services/get_colmenas';
 import HiveCard from './HiveCard';
 
 const ColmenasResumen = () => {
@@ -14,7 +14,7 @@ const ColmenasResumen = () => {
     const fetchHives = async () => {
       try {
         setLoading(true);
-        const fetchedHives = await getHivesForMonitoring();
+        const fetchedHives = await getHives();
         setHives(fetchedHives);
         setError(null);
       } catch (err) {

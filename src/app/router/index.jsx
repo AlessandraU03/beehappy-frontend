@@ -27,15 +27,15 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
         {/* Rutas de autenticación */}
-        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginForm />} />
-        <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginForm />} />
-        <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />} />
-        <Route path="/forgot-contrasena" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <ValidateCodeVerification />} />
+        <Route path="/" element={isAuthenticated ? <Navigate to="/Inicio" replace /> : <LoginForm />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/Inicio" replace /> : <LoginForm />} />
+        <Route path="/register" element={isAuthenticated ? <Navigate to="/Inicio" replace /> : <RegisterPage />} />
+        <Route path="/forgot-contrasena" element={isAuthenticated ? <Navigate to="/Inicio" replace /> : <ValidateCodeVerification />} />
         <Route path="/set-new-password" element={<ResetPasswordSection />} />
 
         {/* Rutas protegidas */}
         <Route element={isAuthenticated ? <MainLayout /> : <Navigate to="/" replace />}>
-          <Route path="/dashboard" element={<Home />} />
+          <Route path="/Inicio" element={<Home />} />
           <Route path="/colmenas" element={<Colmenas />} />
 
           {/* Rutas generales */}
@@ -60,6 +60,8 @@ export default function AppRouter() {
           {/* Monitoreo en tiempo real desde /monitoreo */}
           <Route path="/monitoreo/colmena/:hiveId" element={<Graficas />} />
           <Route path="/estadisticas/colmena/:hiveId" element={<EstadisticasDashboard />} />
+          <Route path="/colmenas/:hiveId/editar" element={<FormCreateColmena isEdit={true} />} />
+
         </Route>
 
         {/* Ruta catch-all */}
