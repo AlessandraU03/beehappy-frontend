@@ -1,5 +1,5 @@
 export const createColmena = async (nuevaColmena) => {
-  const token = sessionStorage.getItem('token'); // Asegúrate que esté guardado correctamente
+  const token = sessionStorage.getItem('auth_token'); // Asegúrate que esté guardado correctamente
   const url = 'http://localhost:8080/api/v1/colmena/';
 
   const response = await fetch(url, {
