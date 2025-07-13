@@ -33,37 +33,19 @@ const Home = () => {
             {/* Si necesitas pasar el logout al Header, hazlo en MainLayout y pásalo como prop al Header */}
             {/* Ejemplo: <Header title="INICIO" onLogout={logout} /> */}
 
-            <main className="flex-1 py-6 text-white">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <HiveSummaryCard number={summary.registered} label="Colmenas registradas" />
-                    <HiveSummaryCard number={summary.active} label="Colmenas activas" />
-                    <HiveSummaryCard number={summary.pending} label="Alertas pendientes" />
-                    <HiveSummaryCard number={summary.completed} label="Alertas completadas" />
-                </div>
-
-               <div className="grid md:grid-cols-2 gap-4 h-full items-stretch">
-  <AlertList alerts={alerts} />
-
-  <div className="flex flex-col gap-4 h-full  "  >
-    <Button variant='secondary'  className="h-full flex-1 " onClick={() => navigate('/formulario-colmena')}>
-      <div className="flex items-center justify-start gap-2 px-4 font-poppins font-semibold text-3xl ">
-        <img src="/add-colmena.png" alt="add-colmena" className="w-14 h-14" />Agregar colmena
-      </div>
-    </Button>
-    <Button variant='secondary' className="h-full flex-1" onClick={() => navigate('/estadisticas')}>
-      <div className="flex items-center justify-start gap-2 px-4 font-poppins font-semibold text-3xl">
-        <img src="/view-stics.png" alt="view" className="w-14 h-14 " /> Ver estadísticas
-      </div>
-    </Button>
-    <Button variant='secondary' className="h-full flex-1" onClick={() => navigate('/monitoreo')}>
-      <div className="flex items-center justify-start gap-2 px-4 font-poppins font-semibold text-3xl ">
-        <img src="/view-mont.png" alt="go" className="w-14 h-14" /> Ir al monitoreo en tiempo real
-      </div>
-    </Button>
+           <main className="flex-1 py-6 px-4 sm:px-6 text-white">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <HiveSummaryCard number={summary.registered} label="Colmenas registradas" />
+    <HiveSummaryCard number={summary.active} label="Colmenas activas" />
+    <HiveSummaryCard number={summary.pending} label="Alertas pendientes" />
+    <HiveSummaryCard number={summary.completed} label="Alertas completadas" />
   </div>
-</div>
 
-            </main>
+  <div className="w-full">
+    <AlertList alerts={alerts} />
+  </div>
+</main>
+
         </div>
     );
 };

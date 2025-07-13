@@ -39,10 +39,10 @@ const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
         setAreaUbicacion(data.area_ubicacion || '');
         setTipoColmena(data.tipo_colmena || '');
         setSensores(data.sensores || {
-          temperatura: false,
-          humedad: false,
-          sonido: false,
-          peso: false,
+          temperatura: true,
+          humedad: true,
+          sonido: true,
+          peso: true,
         });
       } catch (error) {
         console.error('Error al cargar datos de colmena:', error);
@@ -157,7 +157,8 @@ const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
             </div>
           </div>
 
-          <div className="absolute bottom-0 right-0 flex gap-4 p-4">
+          <div className="absolute bottom-0 right-0 flex flex-col gap-4 p-4 w-full sm:w-auto sm:flex-row sm:justify-end">
+
             <Button type="button" onClick={handleCancel} variant="secondary">
               Cancelar
             </Button>

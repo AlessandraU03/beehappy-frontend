@@ -4,32 +4,32 @@ import { Header } from '../components/Header';
 
 const MainLayout = () => {
   const location = useLocation();
-  let title = 'COLMENAS'; // ← título por defecto
+  let title = 'COLMENAS';
   let showBackButton = false;
 
-  // Mostrar "INICIO" solo en el dashboard
   if (location.pathname.startsWith('/dashboard')) {
     title = 'INICIO';
   }
 
-  // Mostrar botón atrás y ocultar título en rutas específicas
   if (
     location.pathname.startsWith('/colmenas/') ||
     location.pathname === '/formulario-colmena'
   ) {
     showBackButton = true;
-    title = ''; // Ocultar el título cuando hay botón de volver
+    title = '';
   }
 
   return (
-    <div className="flex font-poppins min-h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen font-poppins">
       <Sidebar />
-      <div
-        className="flex-1 bg-blue-950"
+      
+      <div className="flex-1 flex flex-col bg-blue-950"
         style={{ backgroundImage: 'url("/panel-blue.png")', backgroundSize: 'cover' }}
       >
         <Header title={title} showBack={showBackButton} />
-        <main className="p-6">
+
+        {/* Área principal con scroll en móvil si es necesario */}
+        <main className="flex-1 p-4 overflow-y-auto">
           <Outlet />
         </main>
       </div>

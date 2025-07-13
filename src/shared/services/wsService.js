@@ -8,7 +8,7 @@ const log = {
   debug: (...args) => isDev && console.debug('[🐛 DEBUG]', ...args),
   info: (...args) => isDev && console.info('[ℹ️ INFO]', ...args),
   warn: (...args) => isDev && console.warn('[⚠️ WARN]', ...args),
-  error: (...args) => console.error('[❌ ERROR]', ...args), // siempre mostramos errores
+
 };
 
 // Conectar al WebSocket

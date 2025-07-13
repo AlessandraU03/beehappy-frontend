@@ -28,24 +28,27 @@ export default function ResetPasswordSection() {
   }, [message]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-between px-4 py-6" 
-      style={{ backgroundImage: 'url("/panel-blue.png")'}}>
-      <div>
+    <div
+      className="min-h-screen flex flex-col justify-between px-4 py-6 bg-cover bg-center"
+      style={{ backgroundImage: 'url("/panel-blue.png")' }}
+    >
+      <div className="relative max-w-3xl mx-auto w-full">
         <button
           onClick={() => navigate('/login')}
-          className="absolute top-14 left-16 text-gray-600 text-5xl hover:text-gray-800 transition-colors"
+          className="absolute top-4 left-4 sm:top-14 sm:left-16 text-gray-600 text-4xl sm:text-5xl hover:text-gray-800 transition-colors rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-label="Volver"
         >
           ←
         </button>
 
-        <h2 className="text-[#013A55] text-4xl font-poppins font-bold text-left mb-6">
+        <h2 className="text-[#013A55] text-3xl sm:text-4xl font-poppins font-bold mb-6 mt-14 sm:mt-0 text-left">
           Restablecer contraseña
         </h2>
-        <p className="text-xl text-gray-800 mb-8 text-center px-4">
+        <p className="text-lg sm:text-xl text-gray-800 mb-8 text-center sm:text-left px-2 sm:px-0">
           Por favor, crea una nueva contraseña y confírmala
         </p>
 
-        <div className="flex flex-col items-center w-full max-w-2xl mx-auto px-4">
+        <div className="flex flex-col items-center w-full px-2 sm:px-0">
           <FormInput
             label="Contraseña nueva:"
             value={newPassword}
@@ -68,14 +71,14 @@ export default function ResetPasswordSection() {
             onClick={handleResetPassword}
             disabled={newPassword.length < 8 || newPassword !== confirmPassword}
             variant="secondary"
-            className="mt-10"
+            className="mt-8 w-full sm:w-auto"
           >
             Cambiar contraseña
           </Button>
 
           <Button
             onClick={() => navigate('/login')}
-            className="bg-white text-[#1A2B4C] hover:bg-gray-100 border border-gray-300 mt-4 shadow-md"
+            className="bg-white text-[#1A2B4C] hover:bg-gray-100 border border-gray-300 mt-4 shadow-md w-full sm:w-auto"
           >
             Cancelar
           </Button>
@@ -86,13 +89,8 @@ export default function ResetPasswordSection() {
       {message && (
         <p
           ref={messageRef}
-          className={`text-xl text-center mt-8 px-4 ${
-            message.toLowerCase().includes('error') ||
-            message.toLowerCase().includes('inválido') ||
-            message.toLowerCase().includes('fallida') ||
-            message.toLowerCase().includes('expiró') ||
-            message.toLowerCase().includes('superado') ||
-            message.toLowerCase().includes('coinciden')
+          className={`text-lg sm:text-xl text-center mt-8 px-2 sm:px-0 ${
+            message.toLowerCase().match(/error|inválido|fallida|expiró|superado|coinciden/)
               ? 'text-red-500'
               : 'text-green-600'
           }`}

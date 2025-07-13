@@ -1,18 +1,14 @@
-// src/views/PasswordResetView.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import EmailInput from '../components/EmailInput';
 import CodeInput from '../components/CodeInput';
-import PasswordInput from '../components/PasswordInput';
 import CountdownTimer from '../components/CountdownTimer';
 import usePasswordResetForm from '../hooks/usePasswordResetForm';
 import validateEmail from '../utils/validateEmail';
 import Button from '../../../shared/components/Button';
-import ResetPasswordSection from './ResetPasswordSection';
 
 export default function ValidateCodeVerification() {
-
   const navigate = useNavigate();
 
   const {
@@ -20,10 +16,6 @@ export default function ValidateCodeVerification() {
     setEmail,
     code,
     setCode,
-    newPassword,
-    setNewPassword,
-    confirmPassword,
-    setConfirmPassword,
     showCodeInput,
     showPasswordInput,
     message,
@@ -32,7 +24,6 @@ export default function ValidateCodeVerification() {
     canTry,
     handleSendCode,
     handleVerifyCode,
-    handleResetPassword,
     handleResendCode,
     codeExpired
   } = usePasswordResetForm(navigate);
@@ -40,7 +31,7 @@ export default function ValidateCodeVerification() {
   return (
     <div
       className="relative min-h-screen bg-[#FFD400] flex flex-col items-center justify-center p-4 pb-6 overflow-auto"
-      style={{ backgroundImage: 'url("/panel.png")'}}
+      style={{ backgroundImage: 'url("/panel.png")' }}
     >
       <style>{`
         @keyframes flyAround {
@@ -61,6 +52,36 @@ export default function ValidateCodeVerification() {
         .animate-fly-around-reverse {
           animation: flyAroundReverse 12s infinite alternate-reverse ease-in-out;
         }
+
+        /* Responsividad para elementos con estilos inline */
+        @media (max-width: 768px) {
+          .responsive-padding {
+            padding: 2rem 1.5rem !important;
+          }
+          .responsive-margin-top {
+            margin-top: 1.5rem !important;
+          }
+          .responsive-width {
+            width: 95% !important;
+          }
+          .responsive-position-top {
+            top: 2rem !important;
+            left: 1rem !important;
+            font-size: 3rem !important;
+          }
+          .responsive-img-right {
+            top: 1rem !important;
+            left: 1rem !important;
+            width: 4rem !important;
+            height: 8rem !important;
+          }
+          .responsive-img-left {
+            bottom: 1rem !important;
+            right: 1rem !important;
+            width: 5rem !important;
+            height: 7rem !important;
+          }
+        }
       `}</style>
 
       <div
@@ -71,25 +92,25 @@ export default function ValidateCodeVerification() {
       <img
         src="/bee-right.png"
         alt="Abeja"
-        className="absolute top-8 left-8 w-24 h-48 transform rotate-[-30deg] animate-fly-around z-10"
+        className="absolute top-8 left-8 w-24 h-48 transform rotate-[-30deg] animate-fly-around z-10 responsive-img-right"
       />
 
       <img
         src="/bee-left.png"
         alt="Abeja"
-        className="absolute bottom-8 right-8 w-28 h-40 transform rotate-[20deg] animate-fly-around-reverse z-10"
+        className="absolute bottom-8 right-8 w-28 h-40 transform rotate-[20deg] animate-fly-around-reverse z-10 responsive-img-left"
       />
 
       <button
         onClick={() => window.history.back()}
-        className="absolute top-14 left-16 text-gray-600 text-5xl hover:text-gray-800 transition-colors z-50"
+        className="absolute top-14 left-16 text-gray-600 text-5xl hover:text-gray-800 transition-colors z-50 responsive-position-top"
+        aria-label="Volver"
       >
         ←
       </button>
 
       <div
-        className="relative p-16 px-24 mt-12
-                   w-11/12 flex flex-col z-20"
+        className="relative p-16 px-24 mt-12 w-11/12 flex flex-col z-20 responsive-padding responsive-margin-top responsive-width"
       >
         <h2 className="text-[#013A55] text-4xl font-poppins font-bold text-start mb-16">
           Ingresa tu correo electrónico:

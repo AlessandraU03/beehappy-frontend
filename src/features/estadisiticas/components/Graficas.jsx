@@ -15,6 +15,33 @@ function Graficas() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // 🔌 WebSocket siempre se conecta al montar
+  useEffect(() => {
+    connectToHiveWS(hiveId);
+
+    const unsubscribe = subscribeToHiveUpdates(data => {
+      console.log("📡 Datos recibidos:", data);
+      setSensorHistory(prev => {
+        const timestamp = new Date();
+        const newData = {
+          time: timestamp.toLocaleTimeString(),
+          temperature: data.temperature,
+          humidity: data.humidity,
+          weight: data.weight,
+          sound: data.sound,
+        };
+        const updatedHistory = [...prev, newData].slice(-20); // máximo 20 puntos
+        return updatedHistory;
+      });
+    });
+
+    return () => {
+      disconnectFromHiveWS();
+      unsubscribe?.(); // si tu wsService devuelve una función de desuscripción
+    };
+  }, [hiveId]);
+
+  // 🐝 Obtener info de la colmena
   useEffect(() => {
     const fetchHiveDetails = async () => {
       try {
@@ -24,44 +51,23 @@ function Graficas() {
 
         if (!currentHive) {
           setError(`Colmena con ID ${hiveId} no encontrada.`);
-          setLoading(false);
           return;
         }
 
         setHiveInfo(currentHive);
-        setLoading(false);
         setError(null);
-
-        connectToHiveWS(hiveId);
-
-        subscribeToHiveUpdates(data => {
-          setSensorHistory(prev => {
-            const timestamp = new Date();
-            const newData = {
-              time: timestamp.toLocaleTimeString(),
-              temperature: data.temperature,
-              humidity: data.humidity,
-              weight: data.weight,
-              sound: data.sound,
-            };
-            const updatedHistory = [...prev, newData].slice(-20);
-            return updatedHistory;
-          });
-        });
       } catch (err) {
         console.error("Error al cargar detalles de la colmena:", err);
         setError("Ocurrió un error al cargar los detalles de la colmena.");
+      } finally {
         setLoading(false);
       }
     };
 
     fetchHiveDetails();
-
-    return () => {
-      disconnectFromHiveWS();
-    };
   }, [hiveId]);
 
+  // ⏳ Estado de carga y errores
   if (loading) return <div className="text-white text-center text-xl mt-8">Cargando datos de la colmena...</div>;
   if (error) return <div className="text-red-400 text-center text-xl mt-8">{error}</div>;
   if (!sensorHistory.length || !hiveInfo) return <div className="text-white text-center text-xl mt-8">No hay datos disponibles para esta colmena.</div>;
@@ -101,7 +107,7 @@ function Graficas() {
       </div>
 
       <p className="text-sm text-gray-300 text-right mt-4">
-        Última actualización: {sensorHistory[sensorHistory.length - 1].time}
+        Última actualización: {sensorHistory[sensorHistory.length - 1]?.time}
       </p>
     </div>
   );

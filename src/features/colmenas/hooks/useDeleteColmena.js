@@ -11,16 +11,21 @@ export const useDeleteColmena = () => {
     setLoading(true);
     setError(null);
 
-    const result = await deleteColmenaService(id);
-
-    if (result.success) {
-      setLoading(false); // <-- Asegura que se desactiva antes de redirigir
+    try {
+      await deleteColmenaService(id);
       alert('Colmena eliminada exitosamente');
       navigate('/colmenas');
-    } else {
-      setError(result.error);
+    } catch (err) {
+      const msg = err.message?.toLowerCase();
+      if (msg.includes("eliminada correctamente")) {
+        alert("Colmena eliminada exitosamente");
+        navigate('/colmenas');
+      } else {
+        setError(err.message);
+        alert(`Error al eliminar: ${err.message}`);
+      }
+    } finally {
       setLoading(false);
-      alert(`Error al eliminar: ${result.error}`);
     }
   };
 

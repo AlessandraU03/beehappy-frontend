@@ -6,8 +6,7 @@ export default function LoginForm() {
   const [usuario, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
   const { login, loading, error } = useAuth();
-   const navigate = useNavigate();
-  
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,16 +14,15 @@ export default function LoginForm() {
       await login({ usuario, contrasena });
       console.log('Login exitoso!');
       navigate('/dashboard');
-
     } catch (error) {
       console.error('Error en login:', error);
     }
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden font-poppins">
+    <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden font-poppins">
       {/* Sección Izquierda */}
-      <div className="flex flex-col w-1/2 bg-[#0E103F] text-white px-12 py-10">
+      <div className="flex flex-col w-full md:w-1/2 bg-[#0E103F] text-white px-8 sm:px-12 py-10">
         {/* Logo y Título */}
         <div className="flex items-center gap-3 mb-10">
           <img src="/Logo.png" alt="BeeHappy Logo" className="h-16" />
@@ -71,7 +69,7 @@ export default function LoginForm() {
             <p className="text-xs mt-1">Mínimo 8 caracteres</p>
           </div>
           <div className="flex justify-end">
-             <Link to="/forgot-contrasena" className="text-sm underline">
+            <Link to="/forgot-contrasena" className="text-sm underline">
               ¿Olvidaste tu contraseña?
             </Link>
           </div>
@@ -92,7 +90,7 @@ export default function LoginForm() {
           </Link>
         </p>
 
-        <div className="mt-auto flex items-end"> 
+        <div className="mt-auto flex items-end">
           <img
             src="/Group 1.png"
             alt="Abeja decorativa"
@@ -100,7 +98,9 @@ export default function LoginForm() {
           />
         </div>
       </div>
-      <div className="flex w-1/2">
+
+      {/* Sección Derecha */}
+      <div className="w-full md:w-1/2 h-64 md:h-auto">
         <img
           src="/login.png"
           alt="Fondo con abejas y hexágonos"

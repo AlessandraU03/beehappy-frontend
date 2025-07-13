@@ -15,8 +15,8 @@ function RegistrationForm({ onRegistrationSuccess }) {
     isSubmitting,
     registrationError,
   } = useRegistration(() => {
-    handleSuccess();             // Muestra el modal
-    onRegistrationSuccess?.();   // Llama a lo que definiste en RegisterPage
+    handleSuccess();
+    onRegistrationSuccess?.();
   });
 
   const { error } = useAuth();
@@ -28,13 +28,13 @@ function RegistrationForm({ onRegistrationSuccess }) {
     setTimeout(() => {
       setShowModal(false);
       navigate('/login');
-    }, 3000); // Espera 3 segundos antes de redirigir
+    }, 3000);
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden font-poppins">
+    <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden font-poppins">
       {/* Imagen de fondo a la izquierda */}
-      <div className="flex w-1/2">
+      <div className="hidden md:flex-1 md:block w-full md:w-1/2">
         <img
           src="/login.png"
           alt="Fondo con abejas y hexágonos"
@@ -42,25 +42,26 @@ function RegistrationForm({ onRegistrationSuccess }) {
         />
       </div>
 
-      <div className="flex flex-col w-1/2 bg-[#0E103F] text-white px-12 py-10 overflow-y-auto">
+      {/* Formulario */}
+      <div className="md:flex-1 w-full md:w-1/2 bg-[#0E103F] text-white px-8 sm:px-12 py-10 overflow-y-auto flex flex-col">
         {/* Logo y Título */}
-        <div className="flex items-center gap-3 mb-4">
-          <img src="/Logo.png" alt="BeeHappy Logo" className="h-16" />
-          <h1 className="text-5xl font-bold">BeeHappy</h1>
-        </div>
+       <div className="flex items-center gap-3 mb-6">
+  <img src="/Logo.png" alt="BeeHappy Logo" className="h-12 sm:h-16" />
+  <h1 className="font-bold text-3xl sm:text-5xl">BeeHappy</h1>
+</div>
 
-        {/* Bienvenida */}
+
         <h2 className="text-3xl font-semibold mb-2">¡Únete a la colmena!</h2>
         <p className="mb-6">Crea tu cuenta para entrar al mundo BeeHappy.</p>
 
-        {/* Mensaje de error */}
-        {error && (
+        {/* Mensajes de error */}
+        {(error || registrationError) && (
           <div className="mb-4 p-3 bg-red-600 text-white rounded">
-            {error}
+            {error || registrationError}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-5">
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-5 flex-grow">
           <Input
             label="Nombre(s):"
             placeholder="Ingresa tu nombre"
@@ -113,8 +114,6 @@ function RegistrationForm({ onRegistrationSuccess }) {
           />
           {errors.contrasena && <p className="text-[#FF6347] text-sm -mt-3">{errors.contrasena}</p>}
 
-          {registrationError && <p className="text-[#FF6347] text-sm text-center">{registrationError}</p>}
-
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Registrando...' : 'Registrarse'}
           </Button>
@@ -131,7 +130,7 @@ function RegistrationForm({ onRegistrationSuccess }) {
       <Modal
         isOpen={showModal}
         title="¡Registro exitoso!"
-        message={`Tu cuenta ha sido creada correctamente. Serás redirigido al inicio de sesión.`}
+        message="Tu cuenta ha sido creada correctamente. Serás redirigido al inicio de sesión."
         onClose={() => {
           setShowModal(false);
           navigate('/login');

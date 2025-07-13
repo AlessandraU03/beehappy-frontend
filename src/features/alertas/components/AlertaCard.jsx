@@ -1,4 +1,3 @@
-// src/features/alertas/components/AlertaCard.jsx
 import React from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -20,7 +19,7 @@ export default function AlertaCard({
 
   if (variant === 'compact') {
     return (
-      <div className="bg-yellow-400 text-[#062343] rounded-md p-4 shadow-md space-y-2 relative">
+      <div className="bg-yellow-400 text-[#062343] rounded-md p-4 shadow-md space-y-2 relative max-w-full">
         <div className="flex justify-between items-start">
           <div>
             <p className="text-lg font-medium">
@@ -45,13 +44,13 @@ export default function AlertaCard({
 
   // Estilo por defecto
   return (
-    <div className="flex items-stretch bg-[#0D3B66] rounded-md shadow-md overflow-hidden text-white">
-      <div className="bg-[#062343] flex flex-col items-center justify-center px-6 py-4 min-w-[100px]">
+    <div className="flex flex-col md:flex-row items-stretch bg-[#0D3B66] rounded-md shadow-md overflow-hidden text-white max-w-full">
+      <div className="bg-[#062343] flex flex-col items-center justify-center px-6 py-4 min-w-[100px] md:min-w-[100px] w-full md:w-auto">
         <span className="text-xl font-semibold">Colmena</span>
         <span className="text-4xl font-bold">{numeroColmena}</span>
       </div>
 
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 w-full">
         <p className="text-lg font-medium">
           Variable afectada: <span className="font-bold">{variable}</span>
         </p>
