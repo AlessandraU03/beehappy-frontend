@@ -1,4 +1,3 @@
-// src/app/providers/AuthProvider.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../../features/authentication/services/authService';
 
@@ -8,30 +7,68 @@ export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(null);
   const [loadingInit, setLoadingInit] = useState(true);
 
+  // Nuevo estado para 2FA
+  const [requireTwoFactor, setRequireTwoFactor] = useState(false);
+  const [emailFor2FA, setEmailFor2FA] = useState(null);
+
   useEffect(() => {
     const current = authService.getCurrentUsuario();
-    // getCurrentUsuario now returns just the username string, so set it directly
     setUsuario(current);
     setLoadingInit(false);
   }, []);
 
+  // Login que puede devolver si requiere 2FA
   const login = async (credentials) => {
-    const userObject = await authService.login(credentials); // This will now be { usuario: "ale" }
-    console.log('Usuario seteado en contexto:', userObject.usuario); // <-- CHANGE HERE
-    setUsuario(userObject.usuario); // <-- CHANGE HERE: Set the actual username string
-    return userObject.usuario; // Return the username string
+    const response = await authService.login(credentials);
+
+    if (response.require_two_factor) {
+      setRequireTwoFactor(true);
+      setEmailFor2FA(response.email); // Guarda email para verificación 2FA
+      setUsuario(null); // No autenticado aún
+    } else {
+      setUsuario(credentials.usuario);
+      setRequireTwoFactor(false);
+      setEmailFor2FA(null);
+    }
+
+    return response;
+  };
+
+  // Nuevo método para verificar 2FA
+  const verifyTwoFactorCode = async (code) => {
+    if (!emailFor2FA) throw new Error('No hay email para verificar');
+
+    const userObject = await authService.verify2FA({ code, email: emailFor2FA });
+
+    setUsuario(userObject.usuario);
+    setRequireTwoFactor(false);
+    setEmailFor2FA(null);
+
+    return userObject;
   };
 
   const logout = async () => {
     await authService.logout();
     setUsuario(null);
+    setRequireTwoFactor(false);
+    setEmailFor2FA(null);
   };
 
-  const isAuthenticated = Boolean(usuario); // This will now be true if usuario is not null
+  const isAuthenticated = Boolean(usuario);
 
   return (
-    <AuthContext.Provider value={{ usuario, isAuthenticated, login, logout }}>
-      { !loadingInit && children }
+    <AuthContext.Provider
+      value={{
+        usuario,
+        isAuthenticated,
+        login,
+        logout,
+        requireTwoFactor,
+        verifyTwoFactorCode,
+        emailFor2FA,
+      }}
+    >
+      {!loadingInit && children}
     </AuthContext.Provider>
   );
 }

@@ -1,25 +1,25 @@
 import React from 'react';
 
 const HiveCard = ({ hive, onClick }) => {
-    return (
-        <div
-            className="flex flex-col sm:flex-row w-full max-w-[522px] rounded-lg shadow-lg cursor-pointer overflow-hidden"
-            onClick={() => onClick(hive.id)}
-        >
-            {/* Left Section (Dark Blue) */}
-            <div className="flex items-center justify-center w-full sm:w-1/4 bg-[#0B1D31] text-white p-4">
-                <div className="text-6xl font-bold">{hive.id}</div>
-            </div>
+  return (
+    <div
+      className="flex flex-col lg:flex-row w-full rounded-lg shadow-lg cursor-pointer overflow-hidden transition-transform hover:scale-[1.01] bg-white"
+      onClick={() => onClick(hive.id)}
+    >
+      {/* Sección Izquierda: ID */}
+      <div className="flex items-center justify-center bg-[#0B1D31] text-white p-4 lg:w-1/4 min-h-[100px]">
+        <div className="text-4xl sm:text-5xl font-bold">{hive.id}</div>
+      </div>
 
-            {/* Right Section (Orange) */}
-            <div className="w-full sm:flex-grow bg-yellow-500 text-blue-950 p-6">
-                <h3 className="text-2xl font-semibold mb-2">Colmena {hive.id}</h3>
-                <p className="text-lg mb-1">Área: {hive.area}</p>
-                <p className="text-lg mb-4">Tipo: {hive.type}</p>
-                <p className="text-base">Humedad, Peso, Sonido, Temperatura</p>
-            </div>
-        </div>
-    );
+      {/* Sección Derecha: Info */}
+      <div className="flex flex-col justify-center bg-yellow-500 text-blue-950 p-4 lg:p-6 w-full">
+        <h3 className="text-xl sm:text-2xl font-semibold mb-1 sm:mb-2">Colmena {hive.id}</h3>
+        <p className="text-sm sm:text-base mb-1">Área: {hive.area}</p>
+        <p className="text-sm sm:text-base mb-2">Tipo: {hive.type}</p>
+        <p className="text-xs sm:text-sm">Humedad, Peso, Sonido, Temperatura</p>
+      </div>
+    </div>
+  );
 };
 
 export default HiveCard;

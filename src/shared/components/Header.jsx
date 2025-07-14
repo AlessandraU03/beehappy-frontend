@@ -54,11 +54,14 @@ export const Header = ({ title, showBack = false }) => {
           <p className="text-xs">Bienvenido</p>
           <p className="font-bold">{usuario}</p>
         </div>
-        <img
-          src="/avatar.png"
-          alt="User"
-          className="w-10 h-10 rounded-full border border-white"
-        />
+        <button
+  title="Ver perfil"
+  onClick={() => navigate("/perfil")}
+  className="hover:text-yellow-300"
+>
+  <User />
+</button>
+
         <button title="Cerrar sesión" onClick={handleLogout}>
           <LogOut className="hover:text-yellow-300" />
         </button>

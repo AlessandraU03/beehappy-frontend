@@ -4,25 +4,39 @@ import { sessionStorageService } from '../../../infrastructure/storage/sessionSt
 
 export const authService = {
   login: async (credentials) => {
-    try {
-      const response = await authApi.login(credentials); // response only contains { token: "..." }
-      console.log('Respuesta del backend:', response);
+    const response = await authApi.login(credentials);
 
+    // Si no requiere 2FA, guardar token directo
+    if (!response.require_two_factor) {
       sessionStorageService.set('auth_token', response.token);
-     
-      sessionStorageService.set('usuario', credentials.usuario); // <-- CHANGE HERE
+      sessionStorageService.set('usuario', credentials.usuario);
+      sessionStorageService.set('user_id', response.id);
+    } else {
+      sessionStorageService.set('usuario', response.email); // para luego usarlo en verify2FA
+      sessionStorageService.set('usuario', credentials.usuario); // para luego usarlo en verify2FA
 
-      return { usuario: credentials.usuario }; // <-- CHANGE HERE: Return an object with the username
-    } catch (error) {
-      throw new Error(error.message || 'Error al iniciar sesión');
+
     }
+
+    return response;
+  },
+
+  verify2FA: async ({ code, email }) => {
+    const response = await authApi.verify2FA({ code, email });
+
+    sessionStorageService.set('auth_token', response.token);
+    sessionStorageService.set('user_id', response.id);
+
+    const usuario = sessionStorageService.get('usuario');
+    return {
+      usuario,
+      id: response.id,
+    };
   },
 
   logout: async () => {
     try {
       await authApi.logout();
-    } catch (error) {
-      console.error('Error al cerrar sesión en el servidor:', error);
     } finally {
       sessionStorageService.remove('auth_token');
       sessionStorageService.remove('usuario');
@@ -39,5 +53,5 @@ export const authService = {
 
   isAuthenticated: () => {
     return !!sessionStorageService.get('auth_token');
-  }
+  },
 };

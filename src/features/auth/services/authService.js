@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://44.196.168.136:8080/api/v1';
+const API_BASE_URL = 'http://44.196.168.136:8081/api/v1';
 
 
 export const registerUser = async (formData) => {

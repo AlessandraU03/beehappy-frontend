@@ -10,7 +10,8 @@ import Colmenas from '../../features/colmenas/pages/Colmenas';
 import Estadisticas from '../../features/estadisiticas/pages/Estadisticas';
 import Monitoreo from '../../features/monitoreo/pages/Monitoreo';
 import Alertas from '../../features/alertas/pages/Alertas';
-
+import ProfilePage from '../../features/profile/pages/ProfilePage';
+import ChangePasswordPage from '../../features/profile/pages/ChangePasswordPage';
 import Graficas from '../../features/estadisiticas/components/Graficas';
 
 import MainLayout from '../../shared/layouts/MainLayout';
@@ -47,6 +48,8 @@ export default function AppRouter() {
 
           {/* Crear colmena */}
           <Route path="formulario-colmena" element={<FormCreateColmena isEdit={false} />} />
+          <Route path="/perfil" element={<ProfilePage/>} />
+          <Route path="change-password" element={<ChangePasswordPage />} />
 
           {/* Detalle colmena con rutas anidadas */}
           <Route path="/colmenas/:hiveId" element={<HiveDetailDashboard />}>

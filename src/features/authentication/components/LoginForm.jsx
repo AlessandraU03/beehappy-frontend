@@ -1,24 +1,99 @@
-import React, { useState } from 'react';
+
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../app/providers/authProvider';
+import CodeInput from '../../auth/components/CodeInput';
+import { useState } from 'react';
 
 export default function LoginForm() {
   const [usuario, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
-  const { login, loading, error } = useAuth();
+  const [code2FA, setCode2FA] = useState('');
+  const { 
+    login, 
+    loading, 
+    error, 
+    requireTwoFactor, 
+    verifyTwoFactorCode 
+  } = useAuth();
+
+  const [localError, setLocalError] = useState(null);
   const navigate = useNavigate();
+
+  const [loading2FA, setLoading2FA] = useState(false);
+  const [loadingLogin, setLoadingLogin] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLocalError(null);
+    setLoadingLogin(true);
+
     try {
-      await login({ usuario, contrasena });
-      console.log('Login exitoso!');
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Error en login:', error);
+      const response = await login({ usuario, contrasena });
+
+      if (!response.require_two_factor) {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      setLocalError(err.message || 'Error al iniciar sesión');
+    } finally {
+      setLoadingLogin(false);
     }
   };
 
+  const handleVerify2FA = async (e) => {
+    e.preventDefault();
+    setLocalError(null);
+    setLoading2FA(true);
+
+    try {
+      await verifyTwoFactorCode(code2FA);
+      navigate('/dashboard');
+    } catch (err) {
+      setLocalError(err.message || 'Código incorrecto o error en verificación');
+    } finally {
+      setLoading2FA(false);
+    }
+  };
+
+  if (requireTwoFactor) {
+    return (
+      <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden font-poppins">
+        <div className="flex flex-col w-full md:w-1/2 bg-[#0E103F]  px-8 sm:px-12 py-10">
+          <h2 className="text-3xl font-semibold mb-4 text-white">Verificación en dos pasos</h2>
+          <p className="mb-6 text-white">Ingresa el código que te enviamos al correo.</p>
+
+          {localError && (
+            <div className="mb-4 p-3 bg-red-600 text-white rounded">
+              {localError}
+            </div>
+          )}
+
+          <form onSubmit={handleVerify2FA} className="flex flex-col space-y-4">
+            <CodeInput value={code2FA} onChange={setCode2FA} />
+
+            <button
+              type="submit"
+              disabled={loading2FA || code2FA.length !== 6}
+              className="bg-yellow-400 text-black py-2 px-4 rounded font-semibold hover:bg-yellow-300 transition disabled:opacity-50"
+            >
+              {loading2FA ? 'Verificando...' : 'Verificar código'}
+            </button>
+          </form>
+        </div>
+
+        <div className="w-full md:w-1/2 h-64 md:h-auto">
+          <img
+            src="/login.png"
+            alt="Fondo con abejas y hexágonos"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+    );
+  }
+
+
+  // Si no requiere 2FA, mostrar el formulario normal de login
   return (
     <div className="flex flex-col md:flex-row h-screen w-screen overflow-hidden font-poppins">
       {/* Sección Izquierda */}
@@ -34,9 +109,9 @@ export default function LoginForm() {
         <p className="mb-6">Tu colmena te espera, ingresa tus datos.</p>
 
         {/* Mensaje de error */}
-        {error && (
+        {(error || localError) && (
           <div className="mb-4 p-3 bg-red-600 text-white rounded">
-            {error}
+            {error || localError}
           </div>
         )}
 
@@ -75,10 +150,10 @@ export default function LoginForm() {
           </div>
           <button
             type="submit"
-            disabled={loading}
+            disabled={loadingLogin}
             className="bg-yellow-400 text-black py-2 px-4 rounded font-semibold hover:bg-yellow-300 transition disabled:opacity-50"
           >
-            {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+            {loadingLogin ? 'Iniciando sesión...' : 'Iniciar sesión'}
           </button>
         </form>
 
