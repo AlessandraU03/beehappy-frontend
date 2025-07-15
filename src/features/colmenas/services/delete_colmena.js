@@ -1,6 +1,6 @@
 export const deleteColmenaService = async (id) => {
   const token = sessionStorage.getItem('auth_token'); // Asegúrate que la key sea la correcta
-  const url = `http://localhost:8080/api/v1/colmena/${id}`;
+  const url = `http://44.196.168.136:8080/api/v1/colmena/${id}`;
 
   const response = await fetch(url, {
     method: 'DELETE',

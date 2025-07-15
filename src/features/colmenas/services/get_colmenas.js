@@ -1,6 +1,6 @@
 export const getHives = async () => {
   const token = sessionStorage.getItem('token'); // Asegúrate de que esté guardado
-  const url = 'http://localhost:8080/api/v1/colmena/';
+  const url = 'http://44.196.168.136:8080/api/v1/colmena/';
 
   const response = await fetch(url, {
     method: 'GET',
@@ -15,6 +15,7 @@ export const getHives = async () => {
   }
 
   const data = await response.json();
+  console.log('Colmenas obtenidas:', data);
 
   // Si necesitas adaptar el formato para HiveCard:
   return data.map(hive => ({
@@ -24,7 +25,8 @@ export const getHives = async () => {
     type: hive.tipo_colmena,
     estado: hive.estado,
     fechaRegistro: hive.fecha_registro,
-    fechaActualizacion: hive.fecha_actualizacion
+    fechaActualizacion: hive.fecha_actualizacion,
+    macRaspberry: hive.mac_raspberry,
   }));
 };
 

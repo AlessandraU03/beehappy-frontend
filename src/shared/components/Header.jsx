@@ -85,12 +85,11 @@ export const Header = ({ title, showBack = false }) => {
 
               <button
                 className="flex items-center gap-2 text-white hover:text-yellow-300"
-                onClick={() => {
-                  // Aquí podrías navegar al perfil si deseas
-                  setShowModal(false);
-                }}
+                onClick={() => { navigate("/perfil"); setShowModal(false); }}
+                
               >
                 <User size={20} />
+                
                 <span>Perfil</span>
               </button>
 

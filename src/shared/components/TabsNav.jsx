@@ -59,7 +59,7 @@ const TabsNav = ({ activeTab, setActiveTab }) => {
         <select
           value={activeTab}
           onChange={(e) => handleTabClick(e.target.value)}
-          className="w-full p-2 border rounded-md text-sm"
+          className="w-full p-2 bg-[#B6B6B6]  border rounded-md text-sm"
         >
           {tabs.map(({ key, label }) => (
             <option key={key} value={key}>

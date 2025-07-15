@@ -33,6 +33,9 @@ const ColmenasResumen = () => {
       navigate(`/monitoreo/colmena/${hiveId}`);
     } else if (location.pathname.startsWith('/estadisticas')) {
       navigate(`/estadisticas/colmena/${hiveId}`);
+    }
+    else if (location.pathname.startsWith('/alertas')) {
+      navigate(`/alertas/colmena/${hiveId}`);
     } else {
       navigate(`/colmenas/${hiveId}/general`);
     }

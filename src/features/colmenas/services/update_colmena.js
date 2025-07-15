@@ -2,7 +2,7 @@
 
 export const updateColmena = async (id, data) => {
      const token = sessionStorage.getItem('token'); // Asegúrate de que esté guardado
-  const url = 'http://localhost:8080/api/v1/colmena';
+  const url = 'http://44.196.168.136:8080/api/v1/colmena';
 
   const response = await fetch(`${url}/${id}`, {
     method: 'PUT',

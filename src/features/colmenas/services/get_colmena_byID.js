@@ -1,4 +1,3 @@
-// src/features/colmenas/services/getColmenaById.js
 import { sessionStorageService } from "../../../infrastructure/storage/sessionStorage";
 
 export const getColmenaById = async (id) => {
@@ -8,7 +7,7 @@ export const getColmenaById = async (id) => {
     throw new Error('Token no encontrado. Debes iniciar sesión.');
   }
 
-  const response = await fetch(`http://localhost:8080/api/v1/colmena/${id}`, {
+  const response = await fetch(`http://44.196.168.136:8080/api/v1/colmena/${id}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -23,5 +22,12 @@ export const getColmenaById = async (id) => {
   }
 
   const data = await response.json();
+
+  // ✅ Guarda la MAC usando la propiedad correcta del backend
+  if (data.mac_raspberry) {
+    sessionStorageService.set('mac_raspberry', data.mac_raspberry);
+    console.log('MAC Address guardada en sessionStorage:', data.mac_raspberry);
+  }
+
   return data;
 };

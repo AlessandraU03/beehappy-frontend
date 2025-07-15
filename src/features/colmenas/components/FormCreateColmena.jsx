@@ -20,6 +20,8 @@ const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
     setAreaUbicacion,
     tipoColmena,
     setTipoColmena,
+    mac,
+    setMac,
     sensores,
     setSensores,
     handleSensorChange,
@@ -37,6 +39,7 @@ const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
         setColmenaId(data.identificador || '');
         setNombreColmena(data.nombre || '');
         setAreaUbicacion(data.area_ubicacion || '');
+        setMac(data.mac || '');
         setTipoColmena(data.tipo_colmena || '');
         setSensores(data.sensores || {
           temperatura: true,
@@ -53,35 +56,36 @@ const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
   }, [isEdit, hiveId]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const colmenaData = {
-      identificador: colmenaId || 'TEMP-ID',
-      nombre: nombreColmena,
-      area_ubicacion: areaUbicacion,
-      tipo_colmena: tipoColmena,
-      estado: 'activo',
-      sensores,
-    };
-
-    try {
-      if (isEdit && hiveId) {
-        await updateColmena(hiveId, colmenaData);
-        alert('Colmena actualizada correctamente');
-        navigate(`/colmenas/${hiveId}`);
-      } else {
-        await createColmena(colmenaData);
-        alert('Colmena creada correctamente');
-        navigate('/colmenas');
-      }
-
-      resetForm();
-      onSubmit?.();
-    } catch (error) {
-      console.error('Error al guardar colmena:', error);
-      alert('Hubo un error al guardar la colmena.');
-    }
+  const colmenaData = {
+    identificador: colmenaId || 'TEMP-ID',
+    nombre: nombreColmena,
+    mac_raspberry: mac || '00:00:00:00:00:00', // <-- aquí el cambio
+    area_ubicacion: areaUbicacion,
+    tipo_colmena: tipoColmena,
+    estado: 'activo',
   };
+
+  try {
+    if (isEdit && hiveId) {
+      await updateColmena(hiveId, colmenaData);
+      alert('Colmena actualizada correctamente');
+      navigate(`/colmenas/${hiveId}`);
+    } else {
+      await createColmena(colmenaData);
+      alert('Colmena creada correctamente');
+      navigate('/colmenas');
+    }
+
+    resetForm();
+    onSubmit?.();
+  } catch (error) {
+    console.error('Error al guardar colmena:', error);
+    alert('Hubo un error al guardar la colmena.');
+  }
+};
+
 
   const handleCancel = () => {
     resetForm();
@@ -102,7 +106,7 @@ const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
         </p>
 
         <form onSubmit={handleSubmit} className="relative pb-28">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <Input
               label="Identificador de la colmena"
               name="identificador"
@@ -123,6 +127,14 @@ const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
               value={areaUbicacion}
               onChange={(e) => setAreaUbicacion(e.target.value)}
               labelClassName="text-white text-lg capitalize flex-grow"
+            />
+            <Input
+              label="MAC de la colmena"
+              name="mac"
+              value={mac}
+              onChange={(e) => setMac(e.target.value)}
+              labelClassName="text-white text-lg capitalize flex-grow"
+              placeholder="00:00:00:00:00:00"
             />
             <Input
               label="Tipo de colmena"

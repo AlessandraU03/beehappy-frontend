@@ -40,6 +40,9 @@ export const authApi = {
 
   logout: () => {
     sessionStorage.removeItem('token');
+    sessionStorage.removeItem('usuario');
+    sessionStorage.removeItem('id');
+    sessionStorage.removeItem('mac_raspberry');
   },
 
   getCurrentUsuario: () => {

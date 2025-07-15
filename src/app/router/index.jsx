@@ -20,6 +20,7 @@ import FormCreateColmena from '../../features/colmenas/components/FormCreateColm
 import ResetPasswordSection from '../../features/auth/pages/ResetPasswordSection';
 import EstadisticasDashboard from '../../features/estadisiticas/pages/EstadisticasDashboard';
 import AlertsDashboard from '../../features/alertas/pages/AlertasDashboard';
+import MonitoreoGraf from '../../features/monitoreo/components/Monitoreo_Graf';
 
 export default function AppRouter() {
   const { isAuthenticated } = useAuth();
@@ -56,13 +57,16 @@ export default function AppRouter() {
             <Route index element={null} /> {/* render por defecto o manejar en HiveDetailDashboard */}
             <Route path="general" element={null} /> {/* Vista general */}
             <Route path="estadisticas" element={<EstadisticasDashboard />} />
-            <Route path="monitoreo-tiempo-real" element={<Graficas />} />
+            <Route path="monitoreo-tiempo-real" element={<MonitoreoGraf />} />
             <Route path="alertas" element={<AlertsDashboard />} />
           </Route>
 
           {/* Monitoreo en tiempo real desde /monitoreo */}
-          <Route path="/monitoreo/colmena/:hiveId" element={<Graficas />} />
+   
           <Route path="/estadisticas/colmena/:hiveId" element={<EstadisticasDashboard />} />
+          <Route path="/alertas/colmena/:hiveId" element={<AlertsDashboard />} />
+          <Route path="/monitoreo/colmena/:hiveId/" element={<MonitoreoGraf/>} />
+          {/* Rutas de administración */}
           <Route path="/colmenas/:hiveId/editar" element={<FormCreateColmena isEdit={true} />} />
 
         </Route>

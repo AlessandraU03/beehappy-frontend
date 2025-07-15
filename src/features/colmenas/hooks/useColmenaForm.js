@@ -5,6 +5,7 @@ export const useColmenaForm = () => {
   const [nombreColmena, setNombreColmena] = useState('');
   const [areaUbicacion, setAreaUbicacion] = useState('');
   const [tipoColmena, setTipoColmena] = useState('');
+  const [mac, setMac] = useState('');
   const [sensores, setSensores] = useState({
     temperatura: false,
     humedad: false,
@@ -23,6 +24,7 @@ export const useColmenaForm = () => {
     setColmenaId('');
     setNombreColmena('');
     setAreaUbicacion('');
+    setMac('');
     setTipoColmena('');
     setSensores({
       temperatura: false,
@@ -38,6 +40,8 @@ export const useColmenaForm = () => {
     nombreColmena,
     setNombreColmena,
     areaUbicacion,
+    mac,
+    setMac,
     setAreaUbicacion,
     tipoColmena,
     setTipoColmena,
