@@ -39,7 +39,6 @@ const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
         setColmenaId(data.identificador || '');
         setNombreColmena(data.nombre || '');
         setAreaUbicacion(data.area_ubicacion || '');
-        setMac(data.mac || '');
         setTipoColmena(data.tipo_colmena || '');
         setSensores(data.sensores || {
           temperatura: true,
@@ -56,36 +55,46 @@ const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
   }, [isEdit, hiveId]);
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const colmenaData = {
-    identificador: colmenaId || 'TEMP-ID',
-    nombre: nombreColmena,
-    mac_raspberry: mac || '00:00:00:00:00:00', // <-- aquí el cambio
-    area_ubicacion: areaUbicacion,
-    tipo_colmena: tipoColmena,
-    estado: 'activo',
-  };
+    const colmenaData = {
+      identificador: colmenaId || 'TEMP-ID',
+      nombre: nombreColmena,
+      area_ubicacion: areaUbicacion,
+      tipo_colmena: tipoColmena,
+      mac_raspberry: mac || '00:00:00:00:00:00',
+      estado: 'activo',
+      sensores,
+    };
 
-  try {
-    if (isEdit && hiveId) {
-      await updateColmena(hiveId, colmenaData);
-      alert('Colmena actualizada correctamente');
-      navigate(`/colmenas/${hiveId}`);
-    } else {
-      await createColmena(colmenaData);
-      alert('Colmena creada correctamente');
-      navigate('/colmenas');
+    try {
+      if (isEdit && hiveId) {
+        await updateColmena(hiveId, colmenaData);
+        alert('Colmena actualizada correctamente');
+        navigate(`/colmenas/${hiveId}`);
+      } else {
+    const result = await createColmena(colmenaData);
+const nuevaId = result.id; // ✅ usa directamente id que es lo que devuelve el backend
+
+sessionStorage.setItem('id_colmena', nuevaId);
+        alert('Colmena creada correctamente');
+navigate(`/colmenas/${nuevaId}/asociar-sensores`);
+if (!nuevaId) {
+  throw new Error('No se pudo obtener el ID de la nueva colmena');
+}
+
+
+
+
+      }
+
+      resetForm();
+      onSubmit?.();
+    } catch (error) {
+      console.error('Error al guardar colmena:', error);
+      alert('Hubo un error al guardar la colmena.');
     }
-
-    resetForm();
-    onSubmit?.();
-  } catch (error) {
-    console.error('Error al guardar colmena:', error);
-    alert('Hubo un error al guardar la colmena.');
-  }
-};
-
+  };
 
   const handleCancel = () => {
     resetForm();
@@ -106,7 +115,7 @@ const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
         </p>
 
         <form onSubmit={handleSubmit} className="relative pb-28">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <Input
               label="Identificador de la colmena"
               name="identificador"
@@ -129,12 +138,12 @@ const FormCreateColmena = ({ isEdit = false, initialData = {}, onSubmit }) => {
               labelClassName="text-white text-lg capitalize flex-grow"
             />
             <Input
-              label="MAC de la colmena"
+              label="MAC de la Raspberry"
               name="mac"
               value={mac}
               onChange={(e) => setMac(e.target.value)}
-              labelClassName="text-white text-lg capitalize flex-grow"
               placeholder="00:00:00:00:00:00"
+              labelClassName="text-white text-lg capitalize flex-grow"
             />
             <Input
               label="Tipo de colmena"

@@ -12,25 +12,25 @@ const log = {
 };
 
 // Conectar al WebSocket
-export const connectToHiveWS = (hiveId) => {
+export const connectToHiveWS = (mac_raspberry) => {
   if (socket) {
     socket.close();
   }
 
-  const wsUrl = `ws://3.224.227.15:8080/ws?account=Colmena${hiveId}`;
+  const wsUrl = `ws://3.224.227.15:8080/ws?account=${mac_raspberry}`;
   socket = new WebSocket(wsUrl);
 
   socket.onopen = () => {
-    log.info(`WebSocket conectado para Hive ${hiveId}`);
+    log.info(`WebSocket conectado para Hive ${mac_raspberry}`);
     log.debug(`URL: ${wsUrl}`);
   };
 
   socket.onerror = (err) => {
-    log.error(`Error en WebSocket para Hive ${hiveId}:`, err);
+    log.error(`Error en WebSocket para Hive ${mac_raspberry}:`, err);
   };
 
   socket.onclose = (event) => {
-    log.warn(`WebSocket cerrado para Hive ${hiveId}. Motivo:`, event.reason || 'Sin especificar');
+    log.warn(`WebSocket cerrado para Hive ${mac_raspberry}. Motivo:`, event.reason || 'Sin especificar');
   };
 };
 
@@ -39,37 +39,65 @@ export const subscribeToHiveUpdates = (callback) => {
   listener = callback;
 
   if (socket) {
-    socket.onmessage = (event) => {
+    socket.onmessage = async (event) => {
       try {
         const data = JSON.parse(event.data);
-        const { sender, receiver, content } = data;
+        const { sender, content } = data;
 
-        log.debug(`[${sender} ➡️ ${receiver}] Mensaje crudo:`, data);
+        log.debug(`[WebSocket] Datos recibidos de ${sender}:`, content);
 
-        // Procesar contenido
-        const parsedContent = {};
+        // Normalizar y recorrer los sensores
         for (const key in content) {
           if (content.hasOwnProperty(key)) {
-            const cleanKey = key.trim().toLowerCase(); // Ej: "Temperatura " => "temperatura"
-            parsedContent[cleanKey] = content[key].trim();
+            const nombre_sensor = key.trim(); // conservar mayúsculas si es necesario
+            const valorStr = content[key].trim();
+            const valor = parseFloat(valorStr);
+
+            if (!isNaN(valor)) {
+              const payload = {
+                mac_raspberry: sender,
+                nombre_sensor,
+                valor
+              };
+
+              try {
+                const response = await fetch('http://44.194.210.138:8081/api/v1/tiempo_real', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                  log.info(`✅ POST enviado:`, payload);
+                } else {
+                  const errorText = await response.text();
+                  log.warn(`❌ Error en POST (${response.status}):`, errorText);
+                }
+              } catch (postError) {
+                log.error("❗ Error al enviar POST:", postError);
+              }
+            } else {
+              log.warn(`⚠️ Valor inválido para ${nombre_sensor}:`, valorStr);
+            }
           }
         }
 
-        log.info("📡 Datos parseados:", parsedContent);
-
-        // Enviar al callback
+        // Callback opcional
         if (listener) {
-          listener(parsedContent);
+          listener(content);
         }
 
       } catch (err) {
-        log.error("Error al parsear mensaje WebSocket:", err);
+        log.error("❌ Error al procesar mensaje WebSocket:", err);
       }
     };
   } else {
-    log.warn("WebSocket no inicializado al momento de suscribirse.");
+    log.warn("⚠️ WebSocket no está conectado.");
   }
 };
+
 
 // Desconectar WebSocket
 export const disconnectFromHiveWS = () => {

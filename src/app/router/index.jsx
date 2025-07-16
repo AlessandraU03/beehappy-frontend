@@ -21,6 +21,7 @@ import ResetPasswordSection from '../../features/auth/pages/ResetPasswordSection
 import EstadisticasDashboard from '../../features/estadisiticas/pages/EstadisticasDashboard';
 import AlertsDashboard from '../../features/alertas/pages/AlertasDashboard';
 import MonitoreoGraf from '../../features/monitoreo/components/Monitoreo_Graf';
+import AsociarSensoresForm from '../../features/sensores/components/AsociarSensoresForm';
 
 export default function AppRouter() {
   const { isAuthenticated } = useAuth();
@@ -68,6 +69,9 @@ export default function AppRouter() {
           <Route path="/monitoreo/colmena/:hiveId/" element={<MonitoreoGraf/>} />
           {/* Rutas de administración */}
           <Route path="/colmenas/:hiveId/editar" element={<FormCreateColmena isEdit={true} />} />
+
+<Route path="/colmenas/:hiveId/asociar-sensores" element={<AsociarSensoresForm />} />
+
 
         </Route>
 
