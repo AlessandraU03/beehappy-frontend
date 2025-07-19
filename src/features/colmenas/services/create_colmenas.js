@@ -13,6 +13,7 @@ export const createColmena = async (nuevaColmena) => {
   });
 
   console.log('➡️ Datos enviados al backend:', nuevaColmena);
+
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Error al crear la colmena');

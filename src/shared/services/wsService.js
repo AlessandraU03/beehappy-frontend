@@ -39,65 +39,37 @@ export const subscribeToHiveUpdates = (callback) => {
   listener = callback;
 
   if (socket) {
-    socket.onmessage = async (event) => {
+    socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        const { sender, content } = data;
+        const { sender, receiver, content } = data;
 
-        log.debug(`[WebSocket] Datos recibidos de ${sender}:`, content);
+        log.debug(`[${sender} ➡️ ${receiver}] Mensaje crudo:`, data);
 
-        // Normalizar y recorrer los sensores
+        // Procesar contenido
+        const parsedContent = {};
         for (const key in content) {
           if (content.hasOwnProperty(key)) {
-            const nombre_sensor = key.trim(); // conservar mayúsculas si es necesario
-            const valorStr = content[key].trim();
-            const valor = parseFloat(valorStr);
-
-            if (!isNaN(valor)) {
-              const payload = {
-                mac_raspberry: sender,
-                nombre_sensor,
-                valor
-              };
-
-              try {
-                const response = await fetch('http://44.194.210.138:8081/api/v1/tiempo_real', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify(payload)
-                });
-
-                if (response.ok) {
-                  log.info(`✅ POST enviado:`, payload);
-                } else {
-                  const errorText = await response.text();
-                  log.warn(`❌ Error en POST (${response.status}):`, errorText);
-                }
-              } catch (postError) {
-                log.error("❗ Error al enviar POST:", postError);
-              }
-            } else {
-              log.warn(`⚠️ Valor inválido para ${nombre_sensor}:`, valorStr);
-            }
+            const cleanKey = key.trim().toLowerCase(); // Ej: "Temperatura " => "temperatura"
+            parsedContent[cleanKey] = content[key].trim();
           }
         }
 
-        // Callback opcional
+        log.info("📡 Datos parseados:", parsedContent);
+
+        // Enviar al callback
         if (listener) {
-          listener(content);
+          listener(parsedContent);
         }
 
       } catch (err) {
-        log.error("❌ Error al procesar mensaje WebSocket:", err);
+        log.error("Error al parsear mensaje WebSocket:", err);
       }
     };
   } else {
-    log.warn("⚠️ WebSocket no está conectado.");
+    log.warn("WebSocket no inicializado al momento de suscribirse.");
   }
 };
-
 
 // Desconectar WebSocket
 export const disconnectFromHiveWS = () => {

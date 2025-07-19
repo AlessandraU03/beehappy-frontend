@@ -2,139 +2,110 @@ import React, { useState, useEffect } from 'react';
 import Button from '../../../shared/components/Button';
 
 const ModalCalibracion = ({ isOpen, onClose, sensor, colmenaId, onSave }) => {
-  const [factorCalibracion, setFactorCalibracion] = useState('');
-  const [offsetCalibracion, setOffsetCalibracion] = useState('');
-  const [valorMaximo, setValorMaximo] = useState('');
-  const [valorMinimo, setValorMinimo] = useState('');
-  const [fechaCalibracion, setFechaCalibracion] = useState('');
+  const [factor, setFactor] = useState('');
+  const [offset, setOffset] = useState('');
+  const [valorMax, setValorMax] = useState('');
+  const [valorMin, setValorMin] = useState('');
+  const [fecha, setFecha] = useState('');
 
   useEffect(() => {
-    if (!isOpen) {
-      setFactorCalibracion('');
-      setOffsetCalibracion('');
-      setValorMaximo('');
-      setValorMinimo('');
-      setFechaCalibracion('');
+    if (isOpen) {
+      // Inicializar valores, por ejemplo fecha actual en ISO
+      setFecha(new Date().toISOString().slice(0, 16)); // formato YYYY-MM-DDTHH:mm
+      setFactor('');
+      setOffset('');
+      setValorMax('');
+      setValorMin('');
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-const handleSubmit = () => {
-  if (!sensor || !colmenaId) {
-    alert('Sensor o colmena no definidos');
-    return;
-  }
+  const handleSubmit = () => {
+    // Validaciones básicas
+    if (!factor || !offset || !valorMax || !valorMin || !fecha) {
+      alert('Por favor llena todos los campos');
+      return;
+    }
 
-  if (
-    factorCalibracion.trim() === '' ||
-    offsetCalibracion.trim() === '' ||
-    valorMaximo.trim() === '' ||
-    valorMinimo.trim() === '' ||
-    fechaCalibracion.trim() === ''
-  ) {
-    alert('Por favor completa todos los campos');
-    return;
-  }
+    const calibracion = {
+      factor_calibracion: parseFloat(factor),
+      offset_calibracion: parseFloat(offset),
+      valor_maximo: parseFloat(valorMax),
+      valor_minimo: parseFloat(valorMin),
+      fecha_calibracion: new Date(fecha).toISOString(),
+      id_colmena: colmenaId,
+      id_sensor: sensor.id,
+      mac_raspberry: sessionStorage.getItem('mac_raspberry'),
+    };
 
-  const macRaspberry = sessionStorage.getItem('mac_raspberry');
-
-  if (!macRaspberry) {
-    alert('MAC address no encontrada en sessionStorage');
-    return;
-  }
-
-  const calibrationData = {
-    id_colmena: parseInt(colmenaId),
-    id_sensor: parseInt(sensor.id),
-    factor_calibracion: parseFloat(factorCalibracion),
-    offset_calibracion: parseFloat(offsetCalibracion),
-    valor_maximo: parseFloat(valorMaximo),
-    valor_minimo: parseFloat(valorMinimo),
-    fecha_calibracion: new Date(fechaCalibracion).toISOString(),
-    mac_raspberry: macRaspberry,
+    onSave(calibracion);
   };
 
-  console.log('Datos enviados:', calibrationData);
-  onSave(calibrationData);
-};
-
   return (
-   <div className="fixed inset-0 bg-opacity-30 backdrop-blur-sm flex justify-center items-center z-50">
-    <div className="bg-[#06192D] p-6 rounded-lg text-white w-96 max-w-full shadow-lg">
-        <h2 className="text-xl font-bold mb-4">Calibrar Sensor: {sensor.nombre}</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-md w-96">
+        <h3 className="text-xl font-semibold mb-4">Calibrar Sensor: {sensor?.nombre}</h3>
 
         <label className="block mb-2">
-          Factor de calibración:
+          Factor de calibración
           <input
             type="number"
             step="0.01"
-            value={factorCalibracion}
-            onChange={(e) => setFactorCalibracion(e.target.value)}
-            className="w-full border p-2 rounded"
+            value={factor}
+            onChange={(e) => setFactor(e.target.value)}
+            className="w-full border rounded p-2"
           />
         </label>
 
         <label className="block mb-2">
-          Offset de calibración:
+          Offset de calibración
           <input
             type="number"
             step="0.01"
-            value={offsetCalibracion}
-            onChange={(e) => setOffsetCalibracion(e.target.value)}
-            className="w-full border p-2 rounded"
+            value={offset}
+            onChange={(e) => setOffset(e.target.value)}
+            className="w-full border rounded p-2"
           />
         </label>
 
         <label className="block mb-2">
-          Valor máximo:
+          Valor máximo
           <input
             type="number"
             step="0.01"
-            value={valorMaximo}
-            onChange={(e) => setValorMaximo(e.target.value)}
-            className="w-full border p-2 rounded"
+            value={valorMax}
+            onChange={(e) => setValorMax(e.target.value)}
+            className="w-full border rounded p-2"
           />
         </label>
 
         <label className="block mb-2">
-          Valor mínimo:
+          Valor mínimo
           <input
             type="number"
             step="0.01"
-            value={valorMinimo}
-            onChange={(e) => setValorMinimo(e.target.value)}
-            className="w-full border p-2 rounded"
+            value={valorMin}
+            onChange={(e) => setValorMin(e.target.value)}
+            className="w-full border rounded p-2"
           />
         </label>
 
         <label className="block mb-4">
-          Fecha calibración:
+          Fecha calibración
           <input
             type="datetime-local"
-            value={fechaCalibracion}
-            onChange={(e) => setFechaCalibracion(e.target.value)}
-            className="w-full border p-2 rounded"
+            value={fecha}
+            onChange={(e) => setFecha(e.target.value)}
+            className="w-full border rounded p-2"
           />
         </label>
 
-        <div className="flex justify-end text-[#F7B440] gap-4">
-          <Button
-            type="button"
-            onClick={onClose}
-            variant='primary'
-            className="bg-gray-300 px-4  py-2 rounded hover:bg-gray-400"
-          >
+        <div className="flex justify-end space-x-2">
+          <Button onClick={onClose} variant="secondary">
             Cancelar
           </Button>
-          <Button
-            type="button"
-            variant='primary'
-            onClick={handleSubmit}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Guardar
-          </Button>
+          <Button onClick={handleSubmit}>Guardar Calibración</Button>
         </div>
       </div>
     </div>

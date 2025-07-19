@@ -46,6 +46,7 @@ function HiveDetailDashboard() {
         area_ubicacion: hive.area_ubicacion,
         tipo_colmena: hive.tipo_colmena,
         estado: hive.estado,
+        mac_raspberry: hive.mac_raspberry,
         fecha_registro: hive.fecha_registro,
         fecha_actualizacion: hive.fecha_actualizacion,
         identificador: hive.identificador,
@@ -73,8 +74,9 @@ function HiveDetailDashboard() {
     fetchHiveInfo();
   }, [hiveId, navigate, location.pathname]);
 
-  useEffect(() => {
-    connectToHiveWS(hiveId);
+useEffect(() => {
+  if (hiveInfo?.mac_raspberry) {
+    connectToHiveWS(hiveInfo.mac_raspberry);
 
     subscribeToHiveUpdates((data) => {
       setSensorData(data);
@@ -83,7 +85,10 @@ function HiveDetailDashboard() {
     return () => {
       disconnectFromHiveWS();
     };
-  }, [hiveId]);
+  }
+}, [hiveInfo?.mac_raspberry]);
+
+
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -110,6 +115,10 @@ function HiveDetailDashboard() {
             <p className="text-2xl sm:text-3xl text-[#F7B440]">
               Tipo: <span className="font-semibold">{hiveInfo.tipo_colmena}</span>
             </p>
+            <p className="text-lg sm:text-xl text-gray-300 mt-2">
+              Estado: <span className={`font-semibold ${hiveInfo.estado === 'activo' ? 'text-green-400' : 'text-red-400'}`}>{hiveInfo.estado}</span>
+            </p>
+
           </div>
 
           {/* Botones + Peso */}
@@ -182,7 +191,7 @@ function HiveDetailDashboard() {
                 />
                 <SensorCard
                   label="Sonido"
-                  value={sensorData?.sonido}
+                  value={sensorData?.frecuencia}
                   unit="MHz"
                   iconColor="text-green-300"
                   icon={<img src="/volume-max.png" alt="Sonido" className="w-14 h-14" />}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getHives } from '../services/get_colmenas';
+import { getColmenaByUsuario } from '../services/get_colmena_byUsuario';
 import HiveCard from './HiveCard';
 
 const ColmenasResumen = () => {
@@ -14,7 +14,7 @@ const ColmenasResumen = () => {
     const fetchHives = async () => {
       try {
         setLoading(true);
-        const fetchedHives = await getHives();
+        const fetchedHives = await getColmenaByUsuario();
         setHives(fetchedHives);
         setError(null);
       } catch (err) {
@@ -33,8 +33,7 @@ const ColmenasResumen = () => {
       navigate(`/monitoreo/colmena/${hiveId}`);
     } else if (location.pathname.startsWith('/estadisticas')) {
       navigate(`/estadisticas/colmena/${hiveId}`);
-    }
-    else if (location.pathname.startsWith('/alertas')) {
+    } else if (location.pathname.startsWith('/alertas')) {
       navigate(`/alertas/colmena/${hiveId}`);
     } else {
       navigate(`/colmenas/${hiveId}/general`);
@@ -51,9 +50,7 @@ const ColmenasResumen = () => {
 
   return (
     <div className="px-4 sm:px-6 md:px-8 py-6">
-      
-     <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2">
-
+      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2">
         {hives.map((hive) => (
           <HiveCard key={hive.id} hive={hive} onClick={handleCardClick} />
         ))}

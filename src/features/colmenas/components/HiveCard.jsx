@@ -14,8 +14,8 @@ const HiveCard = ({ hive, onClick }) => {
       {/* Sección Derecha: Info */}
       <div className="flex flex-col justify-center bg-yellow-500 text-blue-950 p-4 lg:p-6 w-full">
         <h3 className="text-xl sm:text-2xl font-semibold mb-1 sm:mb-2">Colmena {hive.id}</h3>
-        <p className="text-sm sm:text-base mb-1">Área: {hive.area}</p>
-        <p className="text-sm sm:text-base mb-2">Tipo: {hive.type}</p>
+        <p className="text-sm sm:text-base mb-1">Área: {hive.area_ubicacion}</p>
+        <p className="text-sm sm:text-base mb-2">Tipo: {hive.tipo_colmena}</p>
         <p className="text-xs sm:text-sm">Humedad, Peso, Sonido, Temperatura</p>
       </div>
     </div>
