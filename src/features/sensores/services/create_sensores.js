@@ -1,9 +1,10 @@
 import { sessionStorageService } from "../../../infrastructure/storage/sessionStorage";
 
-export const createColmenaSensor = async ({ id_colmena, id_sensor, estado }) => {
+// Función interna para validar datos antes de hacer la petición
+export const createColmenaSensor = async ({ id_colmena, nombre_sensor, estado }) => {
   const token = sessionStorageService.get('auth_token');
 
-  console.log('➡️ Datos enviados al backend:', { estado, id_colmena, id_sensor });
+  console.log('➡️ Datos enviados al backend:', { estado, id_colmena, nombre_sensor });
   console.log('🔐 Token usado:', token);
 
   const res = await fetch('http://44.196.168.136:8080/api/v1/colmena-sensores/', {
@@ -12,7 +13,7 @@ export const createColmenaSensor = async ({ id_colmena, id_sensor, estado }) => 
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ estado, id_colmena, id_sensor }),
+    body: JSON.stringify({ estado, id_colmena, nombre_sensor }),
   });
 
   if (!res.ok) {

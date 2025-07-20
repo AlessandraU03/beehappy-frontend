@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../../../shared/components/Button';
 
-const ModalCalibracion = ({ isOpen, onClose, sensor, colmenaId, onSave }) => {
+function ModalCalibracion({ isOpen, onClose, sensor, colmenaId, calibracionInicial, onSave }) {
   const [factor, setFactor] = useState('');
   const [offset, setOffset] = useState('');
   const [valorMax, setValorMax] = useState('');
@@ -10,23 +10,35 @@ const ModalCalibracion = ({ isOpen, onClose, sensor, colmenaId, onSave }) => {
 
   useEffect(() => {
     if (isOpen) {
-      // Inicializar valores, por ejemplo fecha actual en ISO
-      setFecha(new Date().toISOString().slice(0, 16)); // formato YYYY-MM-DDTHH:mm
-      setFactor('');
-      setOffset('');
-      setValorMax('');
-      setValorMin('');
+      console.log('🪟 Modal abierto para sensor:', sensor);
+      console.log('📐 calibracionInicial recibida:', calibracionInicial);
+
+      if (calibracionInicial) {
+        setFactor(calibracionInicial.factor_calibracion || '');
+        setOffset(calibracionInicial.offset_calibracion || '');
+        setValorMax(calibracionInicial.valor_maximo || '');
+        setValorMin(calibracionInicial.valor_minimo || '');
+        setFecha(calibracionInicial.fecha_calibracion ? new Date(calibracionInicial.fecha_calibracion).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16));
+      } else {
+        setFactor('');
+        setOffset('');
+        setValorMax('');
+        setValorMin('');
+        setFecha(new Date().toISOString().slice(0, 16));
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, calibracionInicial, sensor]);
 
   if (!isOpen) return null;
 
   const handleSubmit = () => {
-    // Validaciones básicas
     if (!factor || !offset || !valorMax || !valorMin || !fecha) {
       alert('Por favor llena todos los campos');
       return;
     }
+
+    const macRaw = sessionStorage.getItem('mac') || '';
+    const macRaspberry = macRaw.replace(/(^")|("$)/g, '');
 
     const calibracion = {
       factor_calibracion: parseFloat(factor),
@@ -34,9 +46,10 @@ const ModalCalibracion = ({ isOpen, onClose, sensor, colmenaId, onSave }) => {
       valor_maximo: parseFloat(valorMax),
       valor_minimo: parseFloat(valorMin),
       fecha_calibracion: new Date(fecha).toISOString(),
-      id_colmena: colmenaId,
+      id_colmena: Number(colmenaId),
       id_sensor: sensor.id,
-      mac_raspberry: sessionStorage.getItem('mac_raspberry'),
+      mac_raspberry: macRaspberry,
+      ...(calibracionInicial?.id ? { id: calibracionInicial.id } : {}),
     };
 
     onSave(calibracion);
@@ -44,72 +57,88 @@ const ModalCalibracion = ({ isOpen, onClose, sensor, colmenaId, onSave }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-md w-96">
+      <div className="bg-white p-6 rounded-md w-96 max-h-[90vh] overflow-auto">
         <h3 className="text-xl font-semibold mb-4">Calibrar Sensor: {sensor?.nombre}</h3>
 
-        <label className="block mb-2">
-          Factor de calibración
-          <input
-            type="number"
-            step="0.01"
-            value={factor}
-            onChange={(e) => setFactor(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-        </label>
+        {/* Mostrar datos actuales de calibración si existen */}
+        {calibracionInicial ? (
+          <div className="mb-4 p-3 bg-gray-100 rounded border border-gray-300 text-sm">
+            <h4 className="font-semibold mb-2">Calibración actual:</h4>
+            <p><strong>Factor:</strong> {calibracionInicial.factor_calibracion ?? '—'}</p>
+            <p><strong>Offset:</strong> {calibracionInicial.offset_calibracion ?? '—'}</p>
+            <p><strong>Máximo:</strong> {calibracionInicial.valor_maximo ?? '—'}</p>
+            <p><strong>Mínimo:</strong> {calibracionInicial.valor_minimo ?? '—'}</p>
+            <p><strong>Fecha:</strong> {calibracionInicial.fecha_calibracion
+              ? new Date(calibracionInicial.fecha_calibracion).toLocaleString()
+              : '—'}</p>
+          </div>
+        ) : (
+          <p className="mb-4 text-gray-600">No hay calibración previa para este sensor.</p>
+        )}
 
-        <label className="block mb-2">
-          Offset de calibración
-          <input
-            type="number"
-            step="0.01"
-            value={offset}
-            onChange={(e) => setOffset(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-        </label>
+        <div className="space-y-3">
+          <div>
+            <label className="block font-medium">Factor calibración</label>
+            <input
+              type="number"
+              step="any"
+              value={factor}
+              onChange={e => setFactor(e.target.value)}
+              className="w-full border border-gray-300 rounded px-2 py-1"
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Offset calibración</label>
+            <input
+              type="number"
+              step="any"
+              value={offset}
+              onChange={e => setOffset(e.target.value)}
+              className="w-full border border-gray-300 rounded px-2 py-1"
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Valor máximo</label>
+            <input
+              type="number"
+              step="any"
+              value={valorMax}
+              onChange={e => setValorMax(e.target.value)}
+              className="w-full border border-gray-300 rounded px-2 py-1"
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Valor mínimo</label>
+            <input
+              type="number"
+              step="any"
+              value={valorMin}
+              onChange={e => setValorMin(e.target.value)}
+              className="w-full border border-gray-300 rounded px-2 py-1"
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Fecha de calibración</label>
+            <input
+              type="datetime-local"
+              value={fecha}
+              onChange={e => setFecha(e.target.value)}
+              className="w-full border border-gray-300 rounded px-2 py-1"
+            />
+          </div>
+        </div>
 
-        <label className="block mb-2">
-          Valor máximo
-          <input
-            type="number"
-            step="0.01"
-            value={valorMax}
-            onChange={(e) => setValorMax(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-        </label>
-
-        <label className="block mb-2">
-          Valor mínimo
-          <input
-            type="number"
-            step="0.01"
-            value={valorMin}
-            onChange={(e) => setValorMin(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-        </label>
-
-        <label className="block mb-4">
-          Fecha calibración
-          <input
-            type="datetime-local"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-            className="w-full border rounded p-2"
-          />
-        </label>
-
-        <div className="flex justify-end space-x-2">
-          <Button onClick={onClose} variant="secondary">
+        <div className="mt-6 flex justify-end gap-2">
+          <Button onClick={onClose} className="bg-gray-400 hover:bg-gray-500">
             Cancelar
           </Button>
-          <Button onClick={handleSubmit}>Guardar Calibración</Button>
+          <Button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700">
+            Guardar
+          </Button>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default ModalCalibracion;

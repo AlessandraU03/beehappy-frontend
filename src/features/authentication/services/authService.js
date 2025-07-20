@@ -42,6 +42,7 @@ export const authService = {
       sessionStorageService.remove('usuario');
       sessionStorageService.remove('id');
       sessionStorageService.remove('mac_rasberry')
+      sessionStorageService.remove('user_id')
     }
   },
 

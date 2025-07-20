@@ -5,23 +5,18 @@ import HiveCard from './HiveCard';
 
 const ColmenasResumen = () => {
   const [hives, setHives] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const hivesPerPage = 4;
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     const fetchHives = async () => {
       try {
-        setLoading(true);
         const fetchedHives = await getColmenaByUsuario();
         setHives(fetchedHives);
-        setError(null);
       } catch (err) {
         console.error("Error al obtener las colmenas:", err);
-        setError("No se pudieron cargar las colmenas. Inténtalo de nuevo más tarde.");
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -40,20 +35,47 @@ const ColmenasResumen = () => {
     }
   };
 
-  if (loading) {
-    return <div className="text-white text-center text-xl mt-8">Cargando resumen de colmenas...</div>;
-  }
+  const indexOfLastHive = currentPage * hivesPerPage;
+  const indexOfFirstHive = indexOfLastHive - hivesPerPage;
+  const currentHives = hives.slice(indexOfFirstHive, indexOfLastHive);
+  const totalPages = Math.ceil(hives.length / hivesPerPage);
 
-  if (error) {
-    return <div className="text-red-400 text-center text-xl mt-8">{error}</div>;
-  }
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6">
+    <div className="relative px-4 sm:px-6 md:px-8 py-6 min-h-[80vh]">
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2">
-        {hives.map((hive) => (
+        {currentHives.map((hive) => (
           <HiveCard key={hive.id} hive={hive} onClick={handleCardClick} />
         ))}
+      </div>
+
+      {/* Botones de paginación en esquina inferior derecha */}
+      <div className="absolute pt-8 right-8 flex gap-2">
+        <button
+          onClick={prevPage}
+          disabled={currentPage === 1}
+          className={`w-10 h-10 rounded-md bg-yellow-400 hover:bg-yellow-500 flex items-center justify-center text-xl font-bold shadow-md ${
+            currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+        >
+          &#60;
+        </button>
+        <button
+          onClick={nextPage}
+          disabled={currentPage === totalPages}
+          className={`w-10 h-10 rounded-md bg-yellow-400 hover:bg-yellow-500 flex items-center justify-center text-xl font-bold shadow-md ${
+            currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+        >
+          &#62;
+        </button>
       </div>
     </div>
   );

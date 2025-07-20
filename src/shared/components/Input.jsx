@@ -8,23 +8,26 @@ const Input = ({
   value,
   onChange,
   error,
-  options = [], // para select o radio
-  checked,       // para checkbox o radio
-  rows = 4,      // para textarea
+  options = [],
+  checked,
+  rows = 4,
   labelClassName = '',
   inputClassName = '',
   containerClassName = '',
 }) => {
   const baseInputClasses = `
-    w-full p-3 rounded-md text-white text-lg font-semibold outline-none box-border
+    w-full p-3 rounded-md text-lg font-semibold outline-none box-border
     border-2
     ${error
       ? 'border-[#FF6347] focus:border-[#FF6347] focus:ring-2 focus:ring-[#FF6347]/30'
-      : 'border-white focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/30'}
+      : 'border-white focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/30'
+    }
     placeholder-[#B0C4DE]
   `;
 
-  const finalInputClasses = `${baseInputClasses} ${inputClassName}`;
+  const inputTextColor = type === 'select' ? 'text-black bg-white' : 'text-white bg-transparent';
+
+  const finalInputClasses = `${baseInputClasses} ${inputTextColor} ${inputClassName}`;
 
   return (
     <div className={`flex flex-col w-full ${containerClassName}`}>
@@ -52,9 +55,11 @@ const Input = ({
           onChange={onChange}
           className={finalInputClasses}
         >
-          <option value="" disabled>Seleccionar</option>
+          <option value="" disabled className="text-gray-400">Seleccionar</option>
           {options.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
+            <option key={opt.value} value={opt.value} className="text-black">
+              {opt.label}
+            </option>
           ))}
         </select>
       ) : type === 'checkbox' || type === 'radio' ? (

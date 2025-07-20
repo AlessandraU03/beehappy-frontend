@@ -49,13 +49,14 @@ function MonitoreoGraf() {
     const unsubscribe = subscribeToHiveUpdates(data => {
       setSensorHistory(prev => {
         const timestamp = new Date();
-        const newData = {
-          time: timestamp.toLocaleTimeString(),
-          temperature: data.temperatura || data.temperature,
-          humidity: data.humedad || data.humidity,
-          weight: data.peso || data.weight,
-          sound: data.frecuencia || data.frecuencia,
-        };
+       const newData = {
+  hora: timestamp.toLocaleTimeString(),
+  temperatura: data.temperatura || data.temperature,
+  humedad: data.humedad || data.humidity,
+  peso: data.peso || data.weight,
+  sonido: data.frecuencia || data.sound,
+};
+
         // Mantener sólo los últimos 20 registros
         return [...prev, newData].slice(-20);
       });
@@ -81,26 +82,26 @@ function MonitoreoGraf() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <SensorChart
           title="Temperatura (°C)"
-          dataKey="temperature"
+          dataKey="temperatura"
           data={sensorHistory}
           strokeColor="#facc15"
         />
         <SensorChart
           title="Humedad (%)"
-          dataKey="humidity"
+          dataKey="humedad"
           data={sensorHistory}
           strokeColor="#60a5fa"
           yDomain={[0, 100]}
         />
         <SensorChart
           title="Peso (kg)"
-          dataKey="weight"
+          dataKey="peso"
           data={sensorHistory}
           strokeColor="#34d399"
         />
         <SensorChart
           title="Sonido (dB)"
-          dataKey="sound"
+          dataKey="sonido"
           data={sensorHistory}
           strokeColor="#a78bfa"
         />
