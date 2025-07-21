@@ -60,21 +60,7 @@ function ModalCalibracion({ isOpen, onClose, sensor, colmenaId, calibracionInici
       <div className="bg-white p-6 rounded-md w-96 max-h-[90vh] overflow-auto">
         <h3 className="text-xl font-semibold mb-4">Calibrar Sensor: {sensor?.nombre}</h3>
 
-        {/* Mostrar datos actuales de calibración si existen */}
-        {calibracionInicial ? (
-          <div className="mb-4 p-3 bg-gray-100 rounded border border-gray-300 text-sm">
-            <h4 className="font-semibold mb-2">Calibración actual:</h4>
-            <p><strong>Factor:</strong> {calibracionInicial.factor_calibracion ?? '—'}</p>
-            <p><strong>Offset:</strong> {calibracionInicial.offset_calibracion ?? '—'}</p>
-            <p><strong>Máximo:</strong> {calibracionInicial.valor_maximo ?? '—'}</p>
-            <p><strong>Mínimo:</strong> {calibracionInicial.valor_minimo ?? '—'}</p>
-            <p><strong>Fecha:</strong> {calibracionInicial.fecha_calibracion
-              ? new Date(calibracionInicial.fecha_calibracion).toLocaleString()
-              : '—'}</p>
-          </div>
-        ) : (
-          <p className="mb-4 text-gray-600">No hay calibración previa para este sensor.</p>
-        )}
+        
 
         <div className="space-y-3">
           <div>

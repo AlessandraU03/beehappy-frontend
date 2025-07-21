@@ -5,16 +5,10 @@ import { useDeleteColmena } from '../hooks/useDeleteColmena';
 import SensorCard from '../components/SensorCard';
 import FormCreateColmena from '../components/FormCreateColmena';
 import { updateEstadoColmena } from '../services/update_estado';
-// Quitar lo de WebSocket:
-// import {
-//   connectToHiveWS,
-//   subscribeToHiveUpdates,
-//   disconnectFromHiveWS
-// } from '../../../shared/services/wsService';
 import TabsNav from '../../../shared/components/TabsNav';
-
-// Importa tu hook de calibración máximo:
-import useCalibracionMax from '../../sensores/hooks/useCalibracionMax';
+import { useAuth } from '../../../app/providers/authProvider';
+// Importa el nuevo hook de calibración
+import useSensorCalibrations from '../../sensores/hooks/useCalibracionMax'; // Asume que lo guardaste aquí
 
 function HiveDetailDashboard() {
   const { hiveId } = useParams();
@@ -23,13 +17,12 @@ function HiveDetailDashboard() {
   const [hiveInfo, setHiveInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // Eliminamos sensorData porque ya no viene por WS
-  // const [sensorData, setSensorData] = useState({});
   const { deleteColmena, loading: deleting } = useDeleteColmena();
   const [showEditForm, setShowEditForm] = useState(false);
+  const { isTechnician } = useAuth();
 
-  // Hook para calibración máxima (valor max peso)
-  const { maxCalibracion, loading: loadingCalibracion, error: errorCalibracion } = useCalibracionMax(hiveId);
+  // Usa el nuevo hook para obtener todas las calibraciones por tipo de sensor
+  const { calibrations, loading: loadingCalibrations, error: errorCalibrations } = useSensorCalibrations(hiveId);
 
   const getActiveTab = () => {
     if (location.pathname.includes('/monitoreo-tiempo-real')) return 'monitoreo-tiempo-real';
@@ -83,11 +76,19 @@ function HiveDetailDashboard() {
     fetchHiveInfo();
   }, [hiveId, navigate, location.pathname]);
 
-  // Ya no usamos WS, quitamos efecto useEffect
-
   const handleTabClick = (tab) => {
     setActiveTab(tab);
     navigate(`/colmenas/${hiveId}/${tab}`);
+  };
+
+  // Helper para obtener el valor de calibración
+  const getSensorCalibratedValue = (sensorType) => {
+    if (loadingCalibrations) return '...';
+    if (errorCalibrations) return 'Error';
+    // Accede a la calibración específica por tipo de sensor.
+    // Aquí puedes decidir qué valor mostrar (valor_maximo, valor_minimo, etc.)
+    // Para el ejemplo, usaremos valor_maximo si existe.
+    return calibrations[sensorType] ? calibrations[sensorType].valor_maximo : 'N/A';
   };
 
   if (loading) return <div className="text-white text-center text-xl mt-8">Cargando detalles de la colmena...</div>;
@@ -140,36 +141,41 @@ function HiveDetailDashboard() {
 
           {/* Botones + Peso */}
           <div className="flex flex-col gap-4 w-full md:w-auto">
-            <div className="flex flex-col sm:flex-row sm:justify-end gap-3">
-              <button
-                onClick={() => {
-                  sessionStorage.setItem('id_colmena', hiveId);
-                  navigate(`/colmenas/${hiveId}/editar`);
-                }}
-                className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-semibold py-2 px-4 rounded-md flex items-center shadow"
-              >
-                <img src="/edit-05.png" alt="Editar" className="w-5 h-5 mr-2" />
-                Editar colmena
-              </button>
+           <div >
+{!isTechnician && activeTab === 'general' && (
+  <div className="flex flex-col sm:flex-row sm:justify-end gap-3">
+    <button
+      onClick={() => {
+        sessionStorage.setItem('id_colmena', hiveId);
+        navigate(`/colmenas/${hiveId}/editar`);
+      }}
+      className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-semibold py-2 px-4 rounded-md flex items-center shadow"
+    >
+      <img src="/edit-05.png" alt="Editar" className="w-5 h-5 mr-2" />
+      Editar colmena
+    </button>
 
-              <button
-                onClick={() => {
-                  const confirmDelete = window.confirm('¿Estás seguro de eliminar esta colmena? Esta acción no se puede deshacer.');
-                  if (confirmDelete) deleteColmena(hiveId);
-                }}
-                disabled={deleting}
-                className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-semibold py-2 px-4 rounded-md flex items-center shadow disabled:opacity-50"
-              >
-                <img src="/trash-01.png" alt="Eliminar" className="w-5 h-5 mr-2" />
-                {deleting ? 'Eliminando...' : 'Eliminar colmena'}
-              </button>
-            </div>
+    <button
+      onClick={() => {
+        const confirmDelete = window.confirm('¿Estás seguro de eliminar esta colmena? Esta acción no se puede deshacer.');
+        if (confirmDelete) deleteColmena(hiveId);
+      }}
+      disabled={deleting}
+      className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-semibold py-2 px-4 rounded-md flex items-center shadow disabled:opacity-50"
+    >
+      <img src="/trash-01.png" alt="Eliminar" className="w-5 h-5 mr-2" />
+      {deleting ? 'Eliminando...' : 'Eliminar colmena'}
+    </button>
+  </div>
+)}
+
+ </div>
 
             {activeTab === 'general' && (
               <div className="w-full md:w-[480px]">
                 <SensorCard
                   label="Peso"
-                  value={loadingCalibracion ? '...' : errorCalibracion ? 'Error' : maxCalibracion}
+                  value={getSensorCalibratedValue('peso')} // Usa el valor de calibración del sensor de peso
                   unit="kg"
                   iconColor="text-yellow-400"
                   icon={<img src="/peso.png" alt="Peso" className="w-14 h-14" />}
@@ -187,34 +193,41 @@ function HiveDetailDashboard() {
             activeTab !== 'general' ? (
               <Outlet />
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                 <SensorCard
                   label="Temperatura"
-                  value={loadingCalibracion ? '...' : errorCalibracion ? 'Error' : maxCalibracion}
+                  value={getSensorCalibratedValue('temperatura')} // Calibración para temperatura
                   unit="°C"
                   iconColor="text-red-400"
                   icon={<img src="/thermometer-03.png" alt="Temperatura" className="w-14 h-14" />}
                 />
                 <SensorCard
                   label="Humedad"
-                 value={loadingCalibracion ? '...' : errorCalibracion ? 'Error' : maxCalibracion}
+                  value={getSensorCalibratedValue('humedad')} // Calibración para humedad
                   unit="%"
                   iconColor="text-blue-300"
                   icon={<img src="/droplets-01.png" alt="Humedad" className="w-14 h-14" />}
                 />
                 <SensorCard
                   label="Sonido"
-                  value={loadingCalibracion ? '...' : errorCalibracion ? 'Error' : maxCalibracion}
-                  unit="MHz"
+                  value={getSensorCalibratedValue('frecuencia')} // Calibración para sonido
+                  unit="MHz" // O la unidad correcta para sonido
                   iconColor="text-green-300"
                   icon={<img src="/volume-max.png" alt="Sonido" className="w-14 h-14" />}
+                />
+                 <SensorCard
+                  label="Vibracion"
+                  value={getSensorCalibratedValue('piezoelectrico')} // Calibración para sonido
+                  unit="V" // O la unidad correcta para sonido
+                  iconColor="text-green-300"
+                  icon={<img src="/volume-max.png" alt="Vibracion" className="w-14 h-14" />}
                 />
               </div>
             )
           )}
         </div>
       </div>
-    </div>
+      </div>
   );
 }
 

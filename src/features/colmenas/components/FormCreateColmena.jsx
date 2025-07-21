@@ -79,7 +79,7 @@ const handleFinalizar = () => {
 
       {/* Barra de pasos */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center text-white justify-between gap-4 sm:gap-0">
-        <div className="flex-1 justify-center flex items-center">
+        <div className="flex-1 justify-center flex items-center pb-6">
           <div className={`w-8 h-8 rounded-full flex mx-3 items-center justify-center ${paso >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}>
             1
           </div>
@@ -101,12 +101,8 @@ const handleFinalizar = () => {
         <StepDatosColmena formState={formState} onColmenaCreada={handleColmenaCreada} />
       ) : (
         <>
-          <StepSensoresCalibracion formState={formState} onFinish={handleFinalizar} />
-          <div className="mt-6">
-            <Button variant="secondary" onClick={() => setPaso(1)}>
-              ← Volver a datos
-            </Button>
-          </div>
+          <StepSensoresCalibracion formState={formState} onFinish={handleFinalizar} setPaso={setPaso}  />
+          
         </>
       )}
     </div>

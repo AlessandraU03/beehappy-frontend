@@ -9,8 +9,9 @@ import { deleteColmenaSensor } from '../../sensores/services/delete_colmena_sens
 import { createCalibracion } from '../../sensores/services/calibracion_sensores';
 import { updateCalibracion } from '../../sensores/services/update_calibracion';
 import { getCalibracionesByColmena } from '../../sensores/services/get_calibracion_sensores';
+import { obtenerIdSensorPorNombre } from '../../sensores/services/get_sensor_nombre';
 
-const StepSensoresCalibracion = ({ formState, onFinish }) => {
+const StepSensoresCalibracion = ({ formState, onFinish,setPaso }) => {
   const { sensores, setSensores, handleSensorChange } = formState;
   const { tiposSensores, loading, error } = useTiposSensores();
 
@@ -79,6 +80,7 @@ const StepSensoresCalibracion = ({ formState, onFinish }) => {
     try {
       if (data.id) {
         await updateCalibracion(data.id, data);
+        
       } else {
         await createCalibracion(data);
       }
@@ -107,39 +109,38 @@ const StepSensoresCalibracion = ({ formState, onFinish }) => {
     // Actualiza checkbox local
     handleSensorChange(e);
 
-    if (checked) {
-      try {
-        console.log('✅ Asociando sensor:', sensor.nombre);
+ if (checked) {
+  try {
+    console.log('✅ Asociando sensor:', sensor.nombre);
 
-        await createColmenaSensor({
-          id_colmena: Number(colmenaId),
-          nombre_sensor: sensor.nombre,
-          estado: 'activo',
-        });
+    await createColmenaSensor({
+      id_colmena: Number(colmenaId),
+      nombre_sensor: sensor.nombre,
+      estado: 'activo',
+    });
 
-        // Carga lista actualizada y la usa de inmediato
-        const sensoresActualizados = await cargarSensoresAsignados();
+    // Carga lista actualizada y la usa de inmediato
+    const sensoresActualizados = await cargarSensoresAsignados();
 
-        const sensorAsignado = sensoresActualizados.find(s => s.nombre === sensor.nombre);
-        console.log('🔧 Sensor asignado:', sensorAsignado);
-        console.log('🧪 Buscando calibración para id_sensor:', sensorAsignado?.id);
-        console.log('📊 Calibración encontrada:', calibracionesExistentes[sensorAsignado?.id]);
+    const sensorAsignado = sensoresActualizados.find(s => s.nombre === sensor.nombre);
+    console.log('🔧 Sensor asignado:', sensorAsignado);
 
-        setSensorCalibrar({
-          id: sensorAsignado?.id || null,
-          nombre: sensor.nombre,
-        });
+    // Obtén el id_sensor real consultando por nombre
+    const idSensorReal = await obtenerIdSensorPorNombre(sensor.nombre);
+    console.log('🧪 ID real del sensor obtenido:', idSensorReal);
 
-        console.log('🧩 Abriendo modal para sensor ID:', sensorAsignado?.id);
-        console.log('🎯 Calibración seleccionada:', calibracionesExistentes[sensorAsignado?.id]);
+    setSensorCalibrar({
+      id: idSensorReal,  // usa el ID real
+      nombre: sensor.nombre,
+    });
 
-        setCalibrando(true);
-      } catch (err) {
-        console.error('❌ Error al asociar sensor a colmena:', err);
-        alert('Error al asociar el sensor. Revisa si ya está asignado.');
-        setSensores(prev => ({ ...prev, [sensor.nombre]: false }));
-      }
-    } else {
+    setCalibrando(true);
+  } catch (err) {
+    console.error('❌ Error al asociar sensor a colmena:', err);
+    alert('Error al asociar el sensor. Revisa si ya está asignado.');
+    setSensores(prev => ({ ...prev, [sensor.nombre]: false }));
+  }
+} else {
       try {
         const sensorAsignado = sensoresAsignados.find(s => s.nombre === sensor.nombre);
 
@@ -165,8 +166,14 @@ const StepSensoresCalibracion = ({ formState, onFinish }) => {
   if (error) return <p className="text-red-500">Error cargando sensores</p>;
 
   return (
-    <>
-      <h2 className="text-2xl text-white font-bold mb-4">Paso 2: Asociar sensores</h2>
+  <div className="flex justify-center p-6">
+    <div className="relative p-6 sm:p-8 bg-[#0C3F72] rounded-lg shadow-2xl w-full max-w-6xl">
+      <h1 className="text-white text-4xl font-bold mb-2">
+        Paso 2: Asociar sensores
+      </h1>
+      <p className="text-white text-lg mb-8">
+        Selecciona los sensores que deseas asociar a esta colmena. Se abrirá una ventana para calibrarlos automáticamente.
+      </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         {tiposSensores.map(sensor => (
@@ -178,26 +185,28 @@ const StepSensoresCalibracion = ({ formState, onFinish }) => {
             onChange={e => handleCheckboxChange(e, sensor)}
             containerClassName="text-lg"
             label={sensor.nombre.charAt(0).toUpperCase() + sensor.nombre.slice(1)}
+            labelClassName="text-white text-lg"
           />
         ))}
       </div>
 
-      {sensoresAsignados.length > 0 && (
-        <div className="mt-6 bg-white/10 p-4 rounded-lg text-white border border-white/20">
-          <h3 className="text-lg font-semibold mb-2">Sensores asignados:</h3>
-          <ul className="list-disc list-inside space-y-1">
-            {sensoresAsignados.map(sensor => (
-              <li key={sensor.id}>
-                {sensor.nombre.charAt(0).toUpperCase() + sensor.nombre.slice(1)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
-      <Button onClick={onFinish} className="w-full sm:w-auto mt-4">
-        Finalizar y guardar
-      </Button>
+<div className="mt-6 sm:absolute sm:bottom-4 sm:right-4 flex flex-col sm:flex-row gap-4 sm:justify-end w-full sm:w-auto p-4 sm:p-0">
+
+  {/* ✅ Botón Volver */}
+  <Button
+    variant="secondary"
+    onClick={() => setPaso(1)}
+   fullWidth=''
+  >
+    ← Volver a datos
+  </Button>
+
+  {/* ✅ Botón Finalizar */}
+  <Button onClick={onFinish} fullWidth='' variant='secondary'>
+    Finalizar y guardar
+  </Button>
+</div>
 
       {calibrando && sensorCalibrar && (
         <ModalCalibracion
@@ -212,8 +221,11 @@ const StepSensoresCalibracion = ({ formState, onFinish }) => {
           onSave={handleGuardarCalibracion}
         />
       )}
-    </>
-  );
+    </div>
+  </div>
+);
+
 };
+
 
 export default StepSensoresCalibracion;

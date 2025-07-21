@@ -55,6 +55,7 @@ export function AuthProvider({ children }) {
   };
 
   const isAuthenticated = Boolean(usuario);
+const isTechnician = usuario?.rol === 'tecnico';
 
   return (
     <AuthContext.Provider
@@ -66,6 +67,7 @@ export function AuthProvider({ children }) {
         requireTwoFactor,
         verifyTwoFactorCode,
         emailFor2FA,
+         isTechnician,
       }}
     >
       {!loadingInit && children}

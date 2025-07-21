@@ -10,7 +10,9 @@ export const useTiposSensores = () => {
     const fetchTipos = async () => {
       try {
         const data = await getSensores();
+
         setTiposSensores(data);
+        
       } catch (err) {
         console.error('Error al cargar tipos de sensores:', err);
         setError(err);
@@ -18,6 +20,8 @@ export const useTiposSensores = () => {
         setLoading(false);
       }
     };
+
+  
 
     fetchTipos();
   }, []);

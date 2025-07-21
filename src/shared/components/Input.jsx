@@ -16,8 +16,8 @@ const Input = ({
   containerClassName = '',
 }) => {
   const baseInputClasses = `
-    w-full p-3 rounded-md text-lg font-semibold outline-none box-border
-    border-2
+    w-full px-4 py-3 rounded-md text-base sm:text-lg font-semibold outline-none box-border
+    border-2 transition-all duration-200
     ${error
       ? 'border-[#FF6347] focus:border-[#FF6347] focus:ring-2 focus:ring-[#FF6347]/30'
       : 'border-white focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/30'
@@ -25,14 +25,19 @@ const Input = ({
     placeholder-[#B0C4DE]
   `;
 
-  const inputTextColor = type === 'select' ? 'text-black bg-white' : 'text-white bg-transparent';
+  const inputTextColor = type === 'select'
+    ? 'text-black bg-white'
+    : 'text-white bg-[#0C3F72]'; // mejor visibilidad en fondos oscuros
 
   const finalInputClasses = `${baseInputClasses} ${inputTextColor} ${inputClassName}`;
 
   return (
     <div className={`flex flex-col w-full ${containerClassName}`}>
       {label && (
-        <label htmlFor={name} className={`text-white text-base font-semibold mb-2 ${labelClassName}`}>
+        <label
+          htmlFor={name}
+          className={`text-white text-sm sm:text-base font-semibold mb-2 ${labelClassName}`}
+        >
           {label}
         </label>
       )}
@@ -55,7 +60,9 @@ const Input = ({
           onChange={onChange}
           className={finalInputClasses}
         >
-          <option value="" disabled className="text-gray-400">Seleccionar</option>
+          <option value="" disabled className="text-gray-400">
+            Seleccionar
+          </option>
           {options.map(opt => (
             <option key={opt.value} value={opt.value} className="text-black">
               {opt.label}
@@ -72,7 +79,7 @@ const Input = ({
             onChange={onChange}
             className={`form-${type} h-5 w-5 text-yellow-500 bg-[#1A2B4C] border-gray-600 rounded focus:ring-yellow-500 ${inputClassName}`}
           />
-          <label htmlFor={name} className={`text-white text-base ${labelClassName}`}>
+          <label htmlFor={name} className={`text-white text-sm sm:text-base ${labelClassName}`}>
             {placeholder}
           </label>
         </div>
