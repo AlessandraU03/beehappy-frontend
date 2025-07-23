@@ -17,8 +17,10 @@ export default function EmailInput({ value, onChange, disabled = false }) {
   onChange={(e) => onChange(e.target.value)}
   disabled={disabled}
   placeholder="Email"
-  className="flex-grow text-2xl font-semibold border-none text-black placeholder-black bg-transparent outline-none"
+  className="flex-grow text-base sm:text-lg md:text-xl lg:text-2xl font-semibold border-none text-black placeholder-black bg-transparent outline-none min-w-0"
 />
+
+
 
       </div>
     </div>

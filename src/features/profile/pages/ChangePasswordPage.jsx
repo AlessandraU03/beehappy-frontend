@@ -37,7 +37,7 @@ const ChangePasswordPage = () => {
         stepChange={stepChange}
         requestCode={requestCode}
         submitChangePassword={submitChangePassword}
-        onClose={() => navigate(-1)} // para volver atrás
+        onClose={() => navigate("/perfil")} // para volver atrás
       />
     </div>
   );

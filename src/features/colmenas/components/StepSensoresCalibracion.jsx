@@ -3,6 +3,7 @@ import Button from '../../../shared/components/Button';
 import Input from '../../../shared/components/Input';
 import { useTiposSensores } from '../../sensores/hooks/useSensores';
 import ModalCalibracion from '../../sensores/components/ModalCalibracion';
+import ToastMessage from '../../../shared/components/Modals/ToastMessage';
 import { getColmenaSensores } from '../services/get_colmena_sensores';
 import { createColmenaSensor } from '../../sensores/services/create_sensores';
 import { deleteColmenaSensor } from '../../sensores/services/delete_colmena_sensor';
@@ -14,6 +15,10 @@ import { obtenerIdSensorPorNombre } from '../../sensores/services/get_sensor_nom
 const StepSensoresCalibracion = ({ formState, onFinish,setPaso }) => {
   const { sensores, setSensores, handleSensorChange } = formState;
   const { tiposSensores, loading, error } = useTiposSensores();
+  const [showToast, setShowToast] = useState(false);
+const [toastType, setToastType] = useState('success'); // 'success' | 'error'
+const [toastMessage, setToastMessage] = useState('');
+
 
   const [sensoresAsignados, setSensoresAsignados] = useState([]);
   const [sensorCalibrar, setSensorCalibrar] = useState(null);
@@ -22,6 +27,13 @@ const StepSensoresCalibracion = ({ formState, onFinish,setPaso }) => {
   const colmenaId = sessionStorage.getItem('id_colmena');
 
   // Función para cargar sensores asignados y retornar lista
+  const mostrarToast = (tipo, mensaje) => {
+  setToastType(tipo);
+  setToastMessage(mensaje);
+  setShowToast(true);
+  setTimeout(() => setShowToast(false), 4000);
+};
+
   const cargarSensoresAsignados = async () => {
     try {
       const todos = await getColmenaSensores();
@@ -84,7 +96,8 @@ const StepSensoresCalibracion = ({ formState, onFinish,setPaso }) => {
       } else {
         await createCalibracion(data);
       }
-      alert('Calibración guardada');
+      mostrarToast('success', 'Calibración guardada con éxito');
+
       setCalibrando(false);
       setSensorCalibrar(null);
 
@@ -99,7 +112,8 @@ const StepSensoresCalibracion = ({ formState, onFinish,setPaso }) => {
       }
     } catch (e) {
       console.error('Error guardando calibración:', e);
-      alert('Error guardando calibración');
+      mostrarToast('error', 'Error guardando la calibración');
+
     }
   };
 
@@ -137,7 +151,8 @@ const StepSensoresCalibracion = ({ formState, onFinish,setPaso }) => {
     setCalibrando(true);
   } catch (err) {
     console.error('❌ Error al asociar sensor a colmena:', err);
-    alert('Error al asociar el sensor. Revisa si ya está asignado.');
+   mostrarToast('error', 'Error al asociar el sensor. Revisa si ya está asignado.');
+
     setSensores(prev => ({ ...prev, [sensor.nombre]: false }));
   }
 } else {
@@ -156,7 +171,8 @@ const StepSensoresCalibracion = ({ formState, onFinish,setPaso }) => {
         await cargarSensoresAsignados();
       } catch (err) {
         console.error('❌ Error al eliminar relación colmena-sensor:', err);
-        alert('Error al eliminar relación del sensor');
+        mostrarToast('error', 'Error al eliminar relación del sensor');
+
         setSensores(prev => ({ ...prev, [sensor.nombre]: true }));
       }
     }
@@ -222,7 +238,17 @@ const StepSensoresCalibracion = ({ formState, onFinish,setPaso }) => {
         />
       )}
     </div>
+    {showToast && (
+  <ToastMessage
+    type={toastType}
+    title={toastType === 'success' ? '¡Éxito!' : '¡Error!'}
+    message={toastMessage}
+    onClose={() => setShowToast(false)}
+  />
+)}
+
   </div>
+  
 );
 
 };

@@ -3,7 +3,9 @@ import StepDatosColmena from './StepDatosColmena';
 import StepSensoresCalibracion from './StepSensoresCalibracion';
 import { useColmenaForm } from '../hooks/useColmenaForm';
 import Button from '../../../shared/components/Button';
+import ToastMessage from '../../../shared/components/Modals/ToastMessage';
 import { useNavigate } from 'react-router-dom';
+import { Import } from 'lucide-react';
 
 const FormCreateColmena = () => {
   const [paso, setPaso] = useState(() => {
@@ -29,6 +31,17 @@ const {
 } = useColmenaForm();
 
   const navigate = useNavigate();
+  const [showToast, setShowToast] = useState(false);
+const [toastType, setToastType] = useState('success');
+const [toastMessage, setToastMessage] = useState('');
+
+const mostrarToast = (tipo, mensaje) => {
+  setToastType(tipo);
+  setToastMessage(mensaje);
+  setShowToast(true);
+  setTimeout(() => setShowToast(false), 4000);
+};
+
     
 
   // Persistir paso actual
@@ -57,14 +70,16 @@ const {
   };
 
 const handleFinalizar = () => {
-  alert('✅ Colmena y sensores guardados correctamente');
+ mostrarToast('success', 'Colmena y sensores guardados correctamente');
 
+setTimeout(() => {
   resetForm();
   sessionStorage.removeItem('paso');
   setPaso(1);
-  setModoEdicion(false); // <- importante para nueva creación luego
-
+  setModoEdicion(false);
   navigate('/colmenas');
+}, 2000); // 2 segundos para que vea el mensaje
+
 };
 
 
@@ -105,6 +120,15 @@ const handleFinalizar = () => {
           
         </>
       )}
+      {showToast && (
+  <ToastMessage
+    type={toastType}
+    title={toastType === 'success' ? '¡Éxito!' : '¡Error!'}
+    message={toastMessage}
+    onClose={() => setShowToast(false)}
+  />
+)}
+
     </div>
   );
 };

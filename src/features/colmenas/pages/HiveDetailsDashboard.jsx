@@ -7,7 +7,7 @@ import FormCreateColmena from '../components/FormCreateColmena';
 import { updateEstadoColmena } from '../services/update_estado';
 import TabsNav from '../../../shared/components/TabsNav';
 import { useAuth } from '../../../app/providers/authProvider';
-// Importa el nuevo hook de calibración
+ import ModalConfirmacionEliminarColmena from '../components/modals/ModalConfirmacionEliminarColmena';
 import useSensorCalibrations from '../../sensores/hooks/useCalibracionMax'; // Asume que lo guardaste aquí
 
 function HiveDetailDashboard() {
@@ -20,7 +20,9 @@ function HiveDetailDashboard() {
   const { deleteColmena, loading: deleting } = useDeleteColmena();
   const [showEditForm, setShowEditForm] = useState(false);
   const { isTechnician } = useAuth();
+  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
 
+ 
   // Usa el nuevo hook para obtener todas las calibraciones por tipo de sensor
   const { calibrations, loading: loadingCalibrations, error: errorCalibrations } = useSensorCalibrations(hiveId);
 
@@ -104,16 +106,21 @@ function HiveDetailDashboard() {
         <div className="flex flex-col md:flex-row justify-between md:items-start mb-6 gap-6">
           {/* Título */}
           <div className="flex-1">
-            <h2 className="text-4xl sm:text-5xl font-extrabold text-[#F7B440]">Colmena {hiveInfo.identificador}</h2>
-            <p className="text-2xl sm:text-3xl mt-2 text-[#F7B440]">
-              Área <span className="font-semibold">{hiveInfo.area_ubicacion}</span>
-            </p>
-            <p className="text-2xl sm:text-3xl text-[#F7B440]">
-              Tipo: <span className="font-semibold">{hiveInfo.tipo_colmena}</span>
-            </p>
+            <h2 className="text-4xl sm:text-5xl font-extrabold text-[#F7B440]">
+ 
+    
+    Colmena {hiveInfo.identificador}
+</h2>
 
-            {/* Interruptor de estado */}
-            <div className="mt-4 flex items-center gap-4">
+{activeTab === 'general' && (
+  <>
+    <p className="text-2xl sm:text-3xl mt-2 text-[#F7B440]">
+      Área <span className="font-semibold">{hiveInfo.area_ubicacion}</span>
+    </p>
+    <p className="text-2xl sm:text-3xl text-[#F7B440]">
+      Tipo: <span className="font-semibold">{hiveInfo.tipo_colmena}</span>
+    </p>
+     <div className="mt-4 flex items-center gap-4">
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -137,6 +144,12 @@ function HiveDetailDashboard() {
                 {hiveInfo.estado === 'activo' ? 'Activo' : 'Inactivo'}
               </span>
             </div>
+  </>
+)}
+
+
+            {/* Interruptor de estado */}
+           
           </div>
 
           {/* Botones + Peso */}
@@ -156,16 +169,14 @@ function HiveDetailDashboard() {
     </button>
 
     <button
-      onClick={() => {
-        const confirmDelete = window.confirm('¿Estás seguro de eliminar esta colmena? Esta acción no se puede deshacer.');
-        if (confirmDelete) deleteColmena(hiveId);
-      }}
-      disabled={deleting}
-      className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-semibold py-2 px-4 rounded-md flex items-center shadow disabled:opacity-50"
-    >
-      <img src="/trash-01.png" alt="Eliminar" className="w-5 h-5 mr-2" />
-      {deleting ? 'Eliminando...' : 'Eliminar colmena'}
-    </button>
+  onClick={() => setMostrarModalEliminar(true)}
+  disabled={deleting}
+  className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-semibold py-2 px-4 rounded-md flex items-center shadow disabled:opacity-50"
+>
+  <img src="/trash-01.png" alt="Eliminar" className="w-5 h-5 mr-2" />
+  {deleting ? 'Eliminando...' : 'Eliminar colmena'}
+</button>
+
   </div>
 )}
 
@@ -227,7 +238,21 @@ function HiveDetailDashboard() {
           )}
         </div>
       </div>
+      <ModalConfirmacionEliminarColmena
+  visible={mostrarModalEliminar}
+  onClose={() => setMostrarModalEliminar(false)}
+  onConfirm={async () => {
+    await deleteColmena(hiveId);
+    setMostrarModalEliminar(false);
+    navigate('/colmenas'); // redirige después de eliminar
+  }}
+  nombre={`Colmena ${hiveInfo.identificador}`}
+  area={hiveInfo.area_ubicacion}
+  tipo={hiveInfo.tipo_colmena}
+/>
+
       </div>
+      
   );
 }
 

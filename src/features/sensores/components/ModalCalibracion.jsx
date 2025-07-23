@@ -56,8 +56,8 @@ function ModalCalibracion({ isOpen, onClose, sensor, colmenaId, calibracionInici
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-md w-96 max-h-[90vh] overflow-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-sm">
+      <div className="bg-white p-6 rounded-md w-96 max-h-[90vh] overflow-auto"  >
         <h3 className="text-xl font-semibold mb-4">Calibrar Sensor: {sensor?.nombre}</h3>
 
         

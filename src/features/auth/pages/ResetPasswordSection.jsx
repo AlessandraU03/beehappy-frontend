@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import FormInput from '../components/FormInput';
 import Button from '../../../shared/components/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
 import usePasswordResetForm from '../hooks/usePasswordResetForm';
+import ToastMessage from '../../../shared/components/Modals/ToastMessage';
 
 export default function ResetPasswordSection() {
   const navigate = useNavigate();
@@ -15,89 +16,104 @@ export default function ResetPasswordSection() {
     confirmPassword,
     setConfirmPassword,
     message,
-    handleResetPassword
+    handleResetPassword,
   } = usePasswordResetForm(navigate, email, code);
 
-  const messageRef = useRef(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastType, setToastType] = useState('success');
 
-  // Hacer scroll al mensaje si aparece
   useEffect(() => {
-    if (message && messageRef.current) {
-      messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (message) {
+      const msgLower = message.toLowerCase();
+      if (msgLower.includes('exitosamente')) {
+        setToastType('success');
+        setShowToast(true);
+        const timer = setTimeout(() => {
+          setShowToast(false);
+          navigate('/login');
+        }, 4000);
+        return () => clearTimeout(timer);
+      } else if (
+        msgLower.includes('error') ||
+        msgLower.includes('falló') ||
+        msgLower.includes('inválido') ||
+        msgLower.includes('expiró') ||
+        msgLower.includes('coinciden')
+      ) {
+        setToastType('error');
+        setShowToast(true);
+        const timer = setTimeout(() => setShowToast(false), 4000);
+        return () => clearTimeout(timer);
+      }
     }
-  }, [message]);
+  }, [message, navigate]);
 
   return (
-    <div
-      className="min-h-screen flex flex-col justify-between px-4 py-6 bg-cover bg-center"
-      style={{ backgroundImage: 'url("/panel-blue.png")' }}
-    >
-      <div className="relative max-w-3xl mx-auto w-full">
-        <button
-          onClick={() => navigate('/login')}
-          className="absolute top-4 left-4 sm:top-14 sm:left-16 text-gray-600 text-4xl sm:text-5xl hover:text-gray-800 transition-colors rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          aria-label="Volver"
-        >
-          ←
-        </button>
+    <>
+      {showToast && (
+        <ToastMessage
+          type={toastType}
+          title={toastType === 'success' ? '¡Contraseña actualizada!' : '¡Atención!'}
+          message={message}
+          onClose={() => {
+            setShowToast(false);
+            if (toastType === 'success') navigate('/login');
+          }}
+        />
+      )}
 
-        <h2 className="text-[#013A55] text-3xl sm:text-4xl font-poppins font-bold mb-6 mt-14 sm:mt-0 text-left">
-          Restablecer contraseña
-        </h2>
-        <p className="text-lg sm:text-xl text-gray-800 mb-8 text-center sm:text-left px-2 sm:px-0">
-          Por favor, crea una nueva contraseña y confírmala
-        </p>
+      <div
+        className="min-h-screen flex items-center justify-center px-4 sm:px-8 py-10 sm:py-16 bg-cover bg-center relative"
+        style={{ backgroundImage: 'url("/panel-blue.png")' }}
+      >
+       
+        <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl text-center">
+          <h2 className="text-white text-3xl sm:text-4xl font-bold font-poppins mb-4">
+            Restablecer contraseña
+          </h2>
+          <p className="text-white text-base sm:text-lg lg:text-xl mb-10 px-2 sm:px-0">
+            Por favor, crea una nueva contraseña y confírmala
+          </p>
 
-        <div className="flex flex-col items-center w-full px-2 sm:px-0">
-          <FormInput
-            label="Contraseña nueva:"
-            value={newPassword}
-            onChange={setNewPassword}
-            type="password"
-            placeholder="Mínimo 8 caracteres"
-            showPasswordToggle={true}
-          />
+          <div className="w-full flex flex-col items-center">
+            <FormInput
+              label="Contraseña nueva:"
+              value={newPassword}
+              onChange={setNewPassword}
+              type="password"
+              placeholder="Mínimo 8 caracteres"
+              showPasswordToggle={true}
+            />
 
-          <FormInput
-            label="Confirmar contraseña:"
-            value={confirmPassword}
-            onChange={setConfirmPassword}
-            type="password"
-            placeholder="Ingresa tu nueva contraseña"
-            showPasswordToggle={true}
-          />
+            <FormInput
+              label="Confirmar contraseña:"
+              value={confirmPassword}
+              onChange={setConfirmPassword}
+              type="password"
+              placeholder="Ingresa tu nueva contraseña"
+              showPasswordToggle={true}
+            />
 
-          <Button
-            onClick={handleResetPassword}
-            disabled={newPassword.length < 8 || newPassword !== confirmPassword}
-            variant="secondary"
-            className="mt-8 w-full sm:w-auto"
-          >
-            Cambiar contraseña
-          </Button>
+            <div className="flex flex-col w-full items-center gap-4 mt-4">
+              <Button
+                onClick={handleResetPassword}
+                variant="secondary"
+                className="bg-[#F7B801] text-black hover:bg-[#e6a800] font-bold text-lg py-4 w-full sm:w-96 rounded-xl shadow-md"
+              >
+                Cambiar contraseña
+              </Button>
 
-          <Button
-            onClick={() => navigate('/login')}
-            className="bg-white text-[#1A2B4C] hover:bg-gray-100 border border-gray-300 mt-4 shadow-md w-full sm:w-auto"
-          >
-            Cancelar
-          </Button>
+              <Button
+                onClick={() => navigate('/login')}
+                variant="secondary"
+                className="bg-white text-[#1A2B4C] hover:bg-gray-100 border w-full sm:w-96 font-bold text-lg py-4 rounded-xl shadow-md"
+              >
+                Cancelar
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Mensaje de éxito o error */}
-      {message && (
-        <p
-          ref={messageRef}
-          className={`text-lg sm:text-xl text-center mt-8 px-2 sm:px-0 ${
-            message.toLowerCase().match(/error|inválido|fallida|expiró|superado|coinciden/)
-              ? 'text-red-500'
-              : 'text-green-600'
-          }`}
-        >
-          {message}
-        </p>
-      )}
-    </div>
+    </>
   );
 }

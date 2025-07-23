@@ -3,7 +3,7 @@ import Input from '../../../shared/components/Input';
 import Button from '../../../shared/components/Button';
 import useRegistration from '../hooks/useRegistration';
 import { Link, useNavigate } from 'react-router-dom';
-import Modal from '../../../shared/components/Modal';
+import ToastMessage from '../../../shared/components/Modals/ToastMessage';
 import { useAuth } from '../../../app/providers/authProvider';
 
 function RegistrationForm({ onRegistrationSuccess }) {
@@ -127,16 +127,19 @@ function RegistrationForm({ onRegistrationSuccess }) {
         </form>
       </div>
 
-      <Modal
-        isOpen={showModal}
-        title="¡Registro exitoso!"
-        message="Tu cuenta ha sido creada correctamente. Serás redirigido al inicio de sesión."
-        onClose={() => {
-          setShowModal(false);
-          navigate('/login');
-        }}
-        showCloseButton={false}
-      />
+      {showModal && (
+  <ToastMessage
+    type="success"
+    title="¡Registro exitoso!"
+    message="Tu cuenta ha sido creada correctamente. Serás redirigido al inicio de sesión."
+    onClose={() => {
+      setShowModal(false);
+      navigate('/login');
+    }}
+  />
+)}
+
+
     </div>
   );
 }

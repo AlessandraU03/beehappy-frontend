@@ -46,7 +46,7 @@ export default function usePasswordResetForm(navigate, externalEmail, externalCo
       setCountdown(60);
       setCodeExpired(false);
     } catch (error) {
-      setMessage('Error al enviar código: ' + error.message);
+      setMessage('Error al enviar código' );
     }
   }, [email]);
 
@@ -79,40 +79,25 @@ const handleVerifyCode = useCallback(() => {
 }, [code, attempts, codeExpired, navigate, email]);
 
 
-  const handleResetPassword = useCallback(async () => {
-    if (newPassword.length < 8) {
-      setMessage('La contraseña debe tener al menos 8 caracteres.');
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setMessage('Las contraseñas no coinciden.');
-      return;
-    }
+const handleResetPassword = useCallback(async () => {
+  if (newPassword.length < 8) {
+    setMessage('La contraseña debe tener al menos 8 caracteres.');
+    return;
+  }
+  if (newPassword !== confirmPassword) {
+    setMessage('Las contraseñas no coinciden.');
+    return;
+  }
 
-    setMessage('Restableciendo contraseña...');
-    console.log("Intentando resetear contraseña con:", { email, code, new_password: newPassword });
+  setMessage('Restableciendo contraseña...');
+  try {
+    await resetPassword({ email, code, new_password: newPassword });
+    setMessage('Contraseña restablecida exitosamente.');
+  } catch (error) {
+    setMessage('Error al restablecer la contraseña');
+  }
+}, [email, code, newPassword, confirmPassword]);
 
-    try {
-      await resetPassword({ email, code, new_password: newPassword });
-      setMessage('Contraseña restablecida exitosamente. Redirigiendo...');
-      // Limpiar estados internos (esto lo puedes ajustar)
-      setEmail('');
-      setCode('');
-      setNewPassword('');
-      setConfirmPassword('');
-      setShowCodeInput(false);
-      setShowPasswordInput(false);
-      setAttempts(0);
-      setCanTry(true);
-      setCountdown(0);
-      setCodeExpired(false);
-
-      navigate('/login');
-    } catch (error) {
-      console.error("Error resetPassword:", error);
-      setMessage('Error al restablecer la contraseña: ' + error.message);
-    }
-  }, [email, code, newPassword, confirmPassword, navigate]);
 
 
   const handleResendCode = useCallback(async () => {
@@ -126,7 +111,7 @@ const handleVerifyCode = useCallback(() => {
       await sendVerificationCode(email);
       setMessage('Nuevo código enviado. Por favor, revisa tu correo.');
     } catch (error) {
-      setMessage('Error al reenviar código: ' + error.message);
+      setMessage('Error al reenviar código');
     }
   }, [email]);
 

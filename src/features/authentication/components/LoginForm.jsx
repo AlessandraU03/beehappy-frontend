@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../app/providers/authProvider';
 import CodeInput from '../../auth/components/CodeInput';
 import { useState } from 'react';
+import { HiEye, HiEyeOff } from 'react-icons/hi';
+
 
 export default function LoginForm() {
   const [usuario, setUsuario] = useState('');
@@ -15,6 +17,8 @@ export default function LoginForm() {
     requireTwoFactor, 
     verifyTwoFactorCode 
   } = useAuth();
+  const [mostrarContrasena, setMostrarContrasena] = useState(false);
+
 
   const [localError, setLocalError] = useState(null);
   const navigate = useNavigate();
@@ -111,7 +115,9 @@ export default function LoginForm() {
         {/* Mensaje de error */}
         {(error || localError) && (
           <div className="mb-4 p-3 bg-red-600 text-white rounded">
-            {error || localError}
+            {(error === "Failed to fetch" || localError === "Failed to fetch")
+              ? "No se pudo conectar con el servidor. Intenta más tarde."
+              : error || localError}
           </div>
         )}
 
@@ -130,19 +136,27 @@ export default function LoginForm() {
             />
             <p className="text-xs mt-1">Máximo 20 caracteres</p>
           </div>
-          <div>
-            <label className="block text-sm">Contraseña</label>
-            <input
-              type="password"
-              minLength={8}
-              value={contrasena}
-              onChange={(e) => setContrasena(e.target.value)}
-              placeholder="Ingresa tu contraseña registrada"
-              className="w-full px-4 py-2 mt-1 rounded bg-white text-black"
-              required
-            />
-            <p className="text-xs mt-1">Mínimo 8 caracteres</p>
-          </div>
+          <div className="relative">
+  <label className="block text-sm">Contraseña</label>
+  <input
+    type={mostrarContrasena ? 'text' : 'password'}
+    minLength={8}
+    value={contrasena}
+    onChange={(e) => setContrasena(e.target.value)}
+    placeholder="Ingresa tu contraseña registrada"
+    className="w-full px-4 py-2 mt-1 rounded bg-white text-black pr-10"
+    required
+  />
+  <button
+    type="button"
+    onClick={() => setMostrarContrasena((prev) => !prev)}
+    className="absolute right-3 top-9 text-gray-600"
+  >
+    {mostrarContrasena ? <HiEye size={20} /> : <HiEyeOff size={20} />}
+  </button>
+  <p className="text-xs mt-1">Mínimo 8 caracteres</p>
+</div>
+
           <div className="flex justify-end">
             <Link to="/forgot-contrasena" className="text-sm underline">
               ¿Olvidaste tu contraseña?

@@ -5,6 +5,8 @@ import { getAlertasByMac } from '../services/get_alertas_mac';
 import { getColmenaById } from '../../colmenas/services/get_colmena_byID';
 import TabsAlertas from '../components/TabsAlertas';
 import { updateAlertaEstado } from '../services/update_alertas';
+import { useLocation } from 'react-router-dom';
+
 
 export default function AlertsDashboard() {
   const { hiveId } = useParams();
@@ -12,6 +14,9 @@ export default function AlertsDashboard() {
   const [loading, setLoading] = useState(true);
   const [colmena, setColmena] = useState(null);
   const [error, setError] = useState(null);
+  const location = useLocation();
+const variant = location.pathname.includes('/colmenas') ? 'compact' : 'default';
+
 
   const [activeTab, setActiveTab] = useState('pendientes');
 
@@ -82,7 +87,7 @@ export default function AlertsDashboard() {
       {loading ? (
         <p className="text-white">Cargando alertas...</p>
       ) : error ? (
-        <p className="text-red-500">❌ {error}</p>
+        <p className="text-red-500">❌ {'No hay Alertas '}</p>
       ) : alertasFiltradas.length === 0 ? (
         <p className="text-white">
           No hay alertas {activeTab === 'pendientes' ? 'activas' : 'resueltas'}.
@@ -101,7 +106,7 @@ export default function AlertsDashboard() {
               estado={alerta.estado}
               checked={alerta.checked}
               onCheckedChange={() => handleCheck(alerta.id)}
-              variant="default" // Siempre usar estilo por defecto
+               variant={variant}
             />
           ))}
         </div>

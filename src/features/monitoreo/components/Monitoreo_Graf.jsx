@@ -6,7 +6,7 @@ import {
   subscribeToHiveUpdates,
   disconnectFromHiveWS
 } from '../../../shared/services/wsService';
-import SensorChart from '../../estadisiticas/components/SensorChart';
+import SensorChart from './SensorChart';
 
 function MonitoreoGraf() {
   const { hiveId } = useParams();
@@ -48,14 +48,20 @@ function MonitoreoGraf() {
 
     const unsubscribe = subscribeToHiveUpdates(data => {
       setSensorHistory(prev => {
-        const timestamp = new Date();
-       const newData = {
-  hora: timestamp.toLocaleTimeString(),
-  temperatura: data.temperatura || data.temperature,
-  humedad: data.humedad || data.humidity,
-  peso: data.peso || data.weight,
-  sonido: data.frecuencia || data.sound,
+       const toNumber = (val) => {
+  const num = parseFloat(val);
+  return isNaN(num) ? null : num;
 };
+
+const newData = {
+  hora: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+  temperatura: toNumber(data.temperatura),
+  humedad: toNumber(data.humedad),
+  peso: toNumber(data.peso),
+  frecuencia: toNumber(data.frecuencia),
+  vibracion: toNumber(data.piezoelectrico),
+};
+
 
         // Mantener sólo los últimos 20 registros
         return [...prev, newData].slice(-20);
@@ -100,16 +106,26 @@ function MonitoreoGraf() {
           strokeColor="#34d399"
         />
         <SensorChart
-          title="Sonido (dB)"
-          dataKey="sonido"
-          data={sensorHistory}
-          strokeColor="#a78bfa"
-        />
+  title="Frecuencia (Hz)"
+  dataKey="frecuencia"
+  data={sensorHistory}
+  strokeColor="#a78bfa"
+/>
+
+        <SensorChart
+  title="Vibración (V)"
+  dataKey="vibracion"
+  data={sensorHistory}
+  strokeColor="#f472b6"
+/>
+
+       
       </div>
 
       <p className="text-sm text-gray-300 text-right mt-4">
-        Última actualización: {sensorHistory[sensorHistory.length - 1]?.time}
-      </p>
+  Última actualización: {sensorHistory[sensorHistory.length - 1]?.hora}
+</p>
+
     </div>
   );
 }

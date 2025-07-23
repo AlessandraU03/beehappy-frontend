@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import logo from "/BeeHappy 1.png";
+import logo from "/BeeHappy1.png";
 
 const navItems = [
   { to: "/", label: "Inicio", icon: <img src="/home-icon.png" alt="Inicio" className="w-6 h-6" /> },

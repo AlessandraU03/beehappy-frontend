@@ -4,6 +4,7 @@ import { useAuth } from '../providers/authProvider';
 import LoginForm from '../../features/authentication/components/LoginForm';
 import RegisterPage from '../../features/auth/pages/RegisterPage';
 import ValidateCodeVerification from '../../features/auth/pages/ValidateCodeVerification';
+import NotFoundPage from '../../shared/pages/NotFoundPage';
 
 import Home from '../../features/dashboard/pages/Home';
 import Colmenas from '../../features/colmenas/pages/Colmenas';
@@ -76,7 +77,8 @@ export default function AppRouter() {
         </Route>
 
         {/* Ruta catch-all */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
+
       </Routes>
     </BrowserRouter>
   );

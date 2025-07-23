@@ -1,11 +1,14 @@
 import React from 'react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
+import { CheckCircleIcon } from '@heroicons/react/24/solid';
+
 
 const TabsAlertas = ({ activeTab, setActiveTab }) => {
   const alertasTabs = [
-    { key: 'pendientes', label: 'Pendientes', icon: <ExclamationTriangleIcon className="w-5 h-5" /> },
-    { key: 'resueltas', label: 'Resueltas', icon: <ExclamationTriangleIcon className="w-5 h-5" /> },
-  ];
+  { key: 'pendientes', label: 'Pendientes', icon: <ExclamationTriangleIcon className="w-5 h-5 "/> },
+  { key: 'resueltas', label: 'Resueltas', icon: <CheckCircleIcon className="w-5 h-5 " /> },
+];
+
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
