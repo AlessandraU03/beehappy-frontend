@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ToastMessage from "../../../shared/components/Modals/ToastMessage";
 import { PencilIcon } from "@heroicons/react/24/outline";
 
 const UserProfile = ({
@@ -11,19 +12,39 @@ const UserProfile = ({
 
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(profile.verificacion_dos_pasos);
   const [loadingToggle, setLoadingToggle] = useState(false);
+  const [toast, setToast] = useState({
+  visible: false,
+  type: "success", // 'success', 'error', 'warning', 'info'
+  title: "",
+  message: "",
+});
 
-  const handleToggleTwoFactor = async () => {
-    setLoadingToggle(true);
-    try {
-      const nuevoEstado = !twoFactorEnabled;
-      const response = await toggleTwoFactorService(nuevoEstado);
-      alert(response.message || "Operación exitosa");
-      setTwoFactorEnabled(nuevoEstado);
-    } catch (error) {
-      alert("Error al cambiar verificación en dos pasos: " + error.message);
-    }
-    setLoadingToggle(false);
-  };
+
+const handleToggleTwoFactor = async () => {
+  setLoadingToggle(true);
+  try {
+    const nuevoEstado = !twoFactorEnabled;
+    const response = await toggleTwoFactorService(nuevoEstado);
+
+    setToast({
+      visible: true,
+      type: "success",
+      title: "Éxito",
+      message: response.message || "Operación exitosa",
+    });
+
+    setTwoFactorEnabled(nuevoEstado);
+  } catch (error) {
+    setToast({
+      visible: true,
+      type: "error",
+      title: "Error",
+      message: "Error al cambiar verificación en dos pasos: " + error.message,
+    });
+  }
+  setLoadingToggle(false);
+};
+
 
   return (
     <div className="max-w-4xl mx-auto bg-[#1F4E79] text-white rounded-xl shadow-lg p-6 md:p-8 mt-6 relative">
@@ -99,6 +120,14 @@ const UserProfile = ({
           Cambiar contraseña
         </button>
       </div>
+      {toast.visible && (
+        <ToastMessage
+          type={toast.type}
+          title={toast.title}
+          message={toast.message}
+          onClose={() => setToast({ ...toast, visible: false })}
+        />
+      )}
     </div>
   );
 };

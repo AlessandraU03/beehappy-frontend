@@ -1,8 +1,9 @@
-// services/get_colmena_con_sensores.js
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_SENSORES;
+
 export async function getColmenaConSensores(idColmena) {
   const token = sessionStorage.getItem('auth_token'); // o de donde tengas el token
 
-  const res = await fetch(`http://44.196.168.136:8080/api/v1/colmena/${idColmena}/sensores`, {
+  const res = await fetch(`${API_BASE_URL}/colmena/${idColmena}/sensores`, {
     headers: {
       Accept: 'application/json',
       Authorization: `Bearer ${token}`,

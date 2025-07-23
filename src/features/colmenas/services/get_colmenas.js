@@ -1,6 +1,8 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_SENSORES;
+
 export const getHives = async () => {
   const token = sessionStorage.getItem('token'); // Asegúrate de que esté guardado
-  const url = 'http://44.196.168.136:8080/api/v1/colmena/';
+  const url = `${API_BASE_URL}/colmena/`;
 
   const response = await fetch(url, {
     method: 'GET',

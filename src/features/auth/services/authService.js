@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://44.196.168.136:8081/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 
 export const registerUser = async (formData) => {

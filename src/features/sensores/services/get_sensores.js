@@ -1,9 +1,10 @@
 import { sessionStorageService } from "../../../infrastructure/storage/sessionStorage";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_SENSORES;
 
 export const getSensores = async () => {
       const token = sessionStorageService.get('auth_token');
   try {
-    const response = await fetch('http://44.196.168.136:8080/api/v1/tipos-sensores/', {
+    const response = await fetch(`${API_BASE_URL}/tipos-sensores/`, {
       headers: {
         'accept': 'application/json',
         'Authorization': `Bearer ${token}`, // <- Asegúrate de obtener el token de tu contexto, localStorage o hook.

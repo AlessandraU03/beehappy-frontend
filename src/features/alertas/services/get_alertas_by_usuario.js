@@ -1,5 +1,6 @@
 // services/get_alertas_by_usuario.js
 import { sessionStorageService } from "../../../infrastructure/storage/sessionStorage";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_ALERTAS;
 
 export const getAlertasByUsuario = async () => {
   const token = sessionStorageService.get('auth_token');
@@ -10,7 +11,7 @@ export const getAlertasByUsuario = async () => {
   }
 
   try {
-    const response = await fetch(`http://44.194.210.138:8081/api/v1/alertas/usuario/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/alertas/usuario/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: 'application/json',

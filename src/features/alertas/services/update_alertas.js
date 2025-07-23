@@ -1,4 +1,4 @@
-// services/update_alerta_estado.js
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_ALERTAS;
 import { sessionStorageService } from "../../../infrastructure/storage/sessionStorage";
 
 export const updateAlertaEstado = async (id, nuevoEstado) => {
@@ -6,7 +6,7 @@ export const updateAlertaEstado = async (id, nuevoEstado) => {
   if (!token) throw new Error('Token no disponible');
 
   try {
-    const response = await fetch(`http://44.194.210.138:8081/api/v1/alertas/${id}/estado`, {
+    const response = await fetch(`${API_BASE_URL}/alertas/${id}/estado`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,

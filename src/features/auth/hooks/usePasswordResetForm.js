@@ -94,26 +94,37 @@ const handleResetPassword = useCallback(async () => {
     await resetPassword({ email, code, new_password: newPassword });
     setMessage('Contraseña restablecida exitosamente.');
   } catch (error) {
-    setMessage('Error al restablecer la contraseña');
+    setMessage(`Error al restablecer la contraseña: ${error?.message || 'Intenta nuevamente.'}`);
+
   }
 }, [email, code, newPassword, confirmPassword]);
 
 
 
   const handleResendCode = useCallback(async () => {
-    setMessage('Reenviando código...');
-    setAttempts(0);
+  if (!email) {
+    setMessage('Ingresa un correo para reenviar el código.');
+    return;
+  }
+
+  setMessage('Reenviando código...');
+  try {
+    await sendVerificationCode(email);
+
+    setCode('');                  // Limpiar input de código
+    setAttempts(0);              // Reiniciar intentos
     setCanTry(true);
     setCodeExpired(false);
-    setCountdown(60);
+    setCountdown(60);            // Reiniciar cuenta regresiva
+    setMessage('Nuevo código enviado. Por favor, revisa tu correo.');
+    setShowCodeInput(false);     // Forzar reinicio del ciclo de expiración
+    setTimeout(() => setShowCodeInput(true), 0); // Reforzar reactivación del useEffect
 
-    try {
-      await sendVerificationCode(email);
-      setMessage('Nuevo código enviado. Por favor, revisa tu correo.');
-    } catch (error) {
-      setMessage('Error al reenviar código');
-    }
-  }, [email]);
+  } catch (error) {
+    setMessage('Error al reenviar código');
+  }
+}, [email]);
+
 
   return {
     email,

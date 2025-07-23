@@ -1,9 +1,10 @@
 import { sessionStorageService } from "../../../infrastructure/storage/sessionStorage";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const toggleTwoFactorApi = async (estado) => {
   const token = sessionStorageService.get("auth_token");
 
-  const response = await fetch("http://44.196.168.136:8081/api/v1/users/profile/2fa/toggle", {
+  const response = await fetch(`${API_BASE_URL}/users/profile/2fa/toggle`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -48,7 +48,7 @@ const FormInput = ({
             onClick={() => setIsPasswordVisible(!isPasswordVisible)}
             className="ml-3 text-gray-500 hover:text-gray-700 text-xl focus:outline-none"
           >
-            {isPasswordVisible ? <FiEyeOff /> : <FiEye />}
+            {isPasswordVisible ? <FiEye /> : <FiEyeOff />}
           </button>
         )}
       </div>

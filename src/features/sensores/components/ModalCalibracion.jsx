@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../../../shared/components/Button';
+import { validarDatosCalibracion } from '../utils/validacionesCalibracion';
+import ToastMessage from '../../../shared/components/Modals/ToastMessage';
+
 
 function ModalCalibracion({ isOpen, onClose, sensor, colmenaId, calibracionInicial, onSave }) {
   const [factor, setFactor] = useState('');
@@ -7,53 +10,98 @@ function ModalCalibracion({ isOpen, onClose, sensor, colmenaId, calibracionInici
   const [valorMax, setValorMax] = useState('');
   const [valorMin, setValorMin] = useState('');
   const [fecha, setFecha] = useState('');
+const [showToast, setShowToast] = useState(false);
+const [toastMessage, setToastMessage] = useState({ type: '', title: '', message: '' });
 
-  useEffect(() => {
-    if (isOpen) {
-      console.log('🪟 Modal abierto para sensor:', sensor);
-      console.log('📐 calibracionInicial recibida:', calibracionInicial);
+const handleCloseToast = () => {
+  setShowToast(false);
+  setToastMessage({ type: '', title: '', message: '' });
+};
 
-      if (calibracionInicial) {
-        setFactor(calibracionInicial.factor_calibracion || '');
-        setOffset(calibracionInicial.offset_calibracion || '');
-        setValorMax(calibracionInicial.valor_maximo || '');
-        setValorMin(calibracionInicial.valor_minimo || '');
-        setFecha(calibracionInicial.fecha_calibracion ? new Date(calibracionInicial.fecha_calibracion).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16));
-      } else {
-        setFactor('');
-        setOffset('');
-        setValorMax('');
-        setValorMin('');
-        setFecha(new Date().toISOString().slice(0, 16));
-      }
-    }
-  }, [isOpen, calibracionInicial, sensor]);
+ useEffect(() => {
+  if (isOpen) {
+    console.log('🪟 Modal abierto para sensor:', sensor);
+    console.log('📐 calibracionInicial recibida:', calibracionInicial);
 
-  if (!isOpen) return null;
+    const formatToLocalDatetime = (dateString) => {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      const formatter = new Intl.DateTimeFormat('es-MX', { // Use a specific locale if preferred
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23', // Ensure 24-hour format
+      });
+      const parts = formatter.formatToParts(date);
+      const year = parts.find(p => p.type === 'year').value;
+      const month = parts.find(p => p.type === 'month').value;
+      const day = parts.find(p => p.type === 'day').value;
+      const hour = parts.find(p => p.type === 'hour').value;
+      const minute = parts.find(p => p.type === 'minute').value;
 
-  const handleSubmit = () => {
-    if (!factor || !offset || !valorMax || !valorMin || !fecha) {
-      alert('Por favor llena todos los campos');
-      return;
-    }
-
-    const macRaw = sessionStorage.getItem('mac') || '';
-    const macRaspberry = macRaw.replace(/(^")|("$)/g, '');
-
-    const calibracion = {
-      factor_calibracion: parseFloat(factor),
-      offset_calibracion: parseFloat(offset),
-      valor_maximo: parseFloat(valorMax),
-      valor_minimo: parseFloat(valorMin),
-      fecha_calibracion: new Date(fecha).toISOString(),
-      id_colmena: Number(colmenaId),
-      id_sensor: sensor.id,
-      mac_raspberry: macRaspberry,
-      ...(calibracionInicial?.id ? { id: calibracionInicial.id } : {}),
+      return `${year}-${month}-${day}T${hour}:${minute}`;
     };
 
-    onSave(calibracion);
+    if (calibracionInicial) {
+      setFactor(calibracionInicial.factor_calibracion || '');
+      setOffset(calibracionInicial.offset_calibracion || '');
+      setValorMax(calibracionInicial.valor_maximo || '');
+      setValorMin(calibracionInicial.valor_minimo || '');
+      setFecha(calibracionInicial.fecha_calibracion ? formatToLocalDatetime(calibracionInicial.fecha_calibracion) : formatToLocalDatetime(new Date()));
+    } else {
+      setFactor('');
+      setOffset('');
+      setValorMax('');
+      setValorMin('');
+      setFecha(formatToLocalDatetime(new Date()));
+    }
+  }
+}, [isOpen, calibracionInicial, sensor]);
+  if (!isOpen) return null;
+
+const handleSubmit = () => {
+  const errores = validarDatosCalibracion({ factor, offset, valorMax, valorMin, fecha });
+
+  if (errores.length > 0) {
+    setToastMessage({
+      type: 'error',
+      title: 'Error de validación',
+      message: errores[0], // o errores.join('\n') para todos
+    });
+    setShowToast(true);
+    return;
+  }
+
+  const macRaw = sessionStorage.getItem('mac') || '';
+  const macRaspberry = macRaw.replace(/(^")|("$)/g, '');
+
+  const calibracion = {
+    factor_calibracion: parseFloat(factor),
+    offset_calibracion: parseFloat(offset),
+    valor_maximo: parseFloat(valorMax),
+    valor_minimo: parseFloat(valorMin),
+    fecha_calibracion: new Date(fecha).toISOString(),
+    id_colmena: Number(colmenaId),
+    id_sensor: sensor.id,
+    mac_raspberry: macRaspberry,
+    ...(calibracionInicial?.id ? { id: calibracionInicial.id } : {}),
   };
+
+  onSave(calibracion);
+};
+useEffect(() => {
+  if (showToast) {
+    const timer = setTimeout(() => {
+      setShowToast(false);
+      setToastMessage({ type: '', title: '', message: '' });
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }
+}, [showToast]);
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-sm">
@@ -74,7 +122,7 @@ function ModalCalibracion({ isOpen, onClose, sensor, colmenaId, calibracionInici
             />
           </div>
           <div>
-            <label className="block font-medium">Offset calibración</label>
+            <label className="block font-medium">Ajuste calibración</label>
             <input
               type="number"
               step="any"
@@ -123,6 +171,15 @@ function ModalCalibracion({ isOpen, onClose, sensor, colmenaId, calibracionInici
           </Button>
         </div>
       </div>
+      {showToast && (
+  <ToastMessage
+    type={toastMessage.type}
+    title={toastMessage.title}
+    message={toastMessage.message}
+    onClose={handleCloseToast}
+  />
+)}
+
     </div>
   );
 }

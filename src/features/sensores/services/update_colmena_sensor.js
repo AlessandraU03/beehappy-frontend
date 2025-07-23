@@ -1,6 +1,8 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_SENSORES;
+
 export const updateColmenaSensor = async (id, data) => {
   const token = sessionStorage.getItem('auth_token');
-  const url = `http://44.196.168.136:8080/api/v1/colmena-sensores/${id}`;
+  const url = `${API_BASE_URL}/colmena-sensores/${id}`;
 
   const response = await fetch(url, {
     method: 'PUT',

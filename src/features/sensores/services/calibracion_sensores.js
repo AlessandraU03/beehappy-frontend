@@ -1,7 +1,9 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_SENSORES;
+
 export const createCalibracion = async (calibrationData) => {
   const token = sessionStorage.getItem('auth_token'); // Ajusta el almacenamiento si usas otro método
 
-  const response = await fetch('http://44.196.168.136:8080/api/v1/calibracion/', {
+  const response = await fetch(`${API_BASE_URL}/calibracion/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -1,10 +1,11 @@
 // services/get_user.js
 import { sessionStorageService } from "../../../infrastructure/storage/sessionStorage";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const getUserProfile = async (id) => {
   const token = sessionStorageService.get("auth_token");
 
-  const url = `http://44.196.168.136:8081/api/v1/users/profile/${id}`;
+  const url = `${API_BASE_URL}/users/profile/${id}`;
 
   const response = await fetch(url, {
     method: "GET",

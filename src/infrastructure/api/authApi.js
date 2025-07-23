@@ -1,6 +1,8 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export const authApi = {
   login: async (credentials) => {
-    const response = await fetch('http://44.196.168.136:8081/api/v1/users/login', {
+    const response = await fetch(`${API_BASE_URL}/users/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -21,7 +23,7 @@ export const authApi = {
   },
 
   verify2FA: async ({ code, email }) => {
-    const response = await fetch('http://44.196.168.136:8081/api/v1/users/login/verify', {
+    const response = await fetch(`${API_BASE_URL}/users/login/verify`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -35,7 +37,7 @@ export const authApi = {
     }
 
     const data = await response.json();
-    return data; // Esto debería incluir el token e id si es exitoso
+    return data;
   },
 
   logout: () => {

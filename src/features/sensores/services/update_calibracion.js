@@ -1,6 +1,8 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_SENSORES;
+
 export const updateCalibracion = async (id, data) => {
   const token = sessionStorage.getItem('auth_token');
-  const url = `http://44.196.168.136:8080/api/v1/calibracion/${id}`;
+  const url = `${API_BASE_URL}/calibracion/${id}`;
 
   const response = await fetch(url, {
     method: 'PUT',

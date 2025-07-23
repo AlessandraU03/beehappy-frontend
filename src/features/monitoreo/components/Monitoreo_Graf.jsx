@@ -82,7 +82,7 @@ const newData = {
   return (
     <div className="p-6 bg-blue-800 bg-opacity-70 rounded-lg shadow-xl text-white max-w-6xl mx-auto">
       <h2 className="text-3xl font-bold mb-6 text-center">
-        Monitoreo Detallado: {hiveInfo.nombre || `Colmena ${hiveInfo.id}`} ({hiveInfo.area_ubicacion} - {hiveInfo.tipo_colmena})
+        {hiveInfo.nombre || `Colmena ${hiveInfo.id}`} ({hiveInfo.area_ubicacion} - {hiveInfo.tipo_colmena})
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

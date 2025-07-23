@@ -9,6 +9,7 @@ import ModalConfirmacionEliminarColmena from './modals/ModalConfirmacionEliminar
 import { updateColmena } from '../services/update_colmena';
 import { getColmenaById } from '../services/get_colmena_byID';
 import ToastMessage from '../../../shared/components/Modals/ToastMessage';
+import { validarDatosColmena } from '../utils/validadacionesColmena';
 
 const StepDatosColmena = ({ onColmenaCreada }) => {
   const navigate = useNavigate();
@@ -47,8 +48,28 @@ const StepDatosColmena = ({ onColmenaCreada }) => {
     modoEdicion,
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
+
+  // ✅ Validar campos antes de enviar
+  const errores = validarDatosColmena({
+    colmenaId,
+    nombreColmena,
+    areaUbicacion,
+    tipoColmena,
+    mac,
+  });
+
+  if (errores.length > 0) {
+    setToastMessage({
+      type: 'error',
+      title: 'Campos inválidos',
+      message: errores[0],
+    });
+    setShowToast(true);
+    return;
+  }
+
   const id_usuario = sessionStorage.getItem('user_id');
   if (!id_usuario) return alert('No se ha encontrado el ID del usuario.');
 
@@ -75,10 +96,9 @@ const StepDatosColmena = ({ onColmenaCreada }) => {
       });
       setShowToast(true);
 
-      // Espera 3.5s antes de continuar
       setTimeout(() => {
         onColmenaCreada(Number(colmenaIdExistente));
-      }, 3500);
+      }, 1000);
     } else {
       const response = await createColmena(data);
       if (response?.data?.id) {
@@ -90,10 +110,9 @@ const StepDatosColmena = ({ onColmenaCreada }) => {
         });
         setShowToast(true);
 
-        // Espera 3.5s antes de continuar
         setTimeout(() => {
           onColmenaCreada(response.data.id);
-        }, 3500);
+        }, 1000);
       } else {
         alert('No se recibió ID de colmena después de crearla.');
       }
@@ -168,7 +187,7 @@ const StepDatosColmena = ({ onColmenaCreada }) => {
     const timer = setTimeout(() => {
       setShowToast(false);
       setToastMessage({ type: '', title: '', message: '' });
-    }, 4000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }

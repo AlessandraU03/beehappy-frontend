@@ -29,7 +29,7 @@ const {
   modoEdicion,
   setModoEdicion,
 } = useColmenaForm();
-
+const hiveId = sessionStorage.getItem('id_colmena');
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
 const [toastType, setToastType] = useState('success');
@@ -70,18 +70,21 @@ const mostrarToast = (tipo, mensaje) => {
   };
 
 const handleFinalizar = () => {
- mostrarToast('success', 'Colmena y sensores guardados correctamente');
+  mostrarToast('success', 'Colmena y sensores guardados correctamente');
 
-setTimeout(() => {
-  resetForm();
-  sessionStorage.removeItem('paso');
-  setPaso(1);
-  setModoEdicion(false);
-  navigate('/colmenas');
-}, 2000); // 2 segundos para que vea el mensaje
+  setTimeout(() => {
+    resetForm();
+    sessionStorage.removeItem('paso');
+    setPaso(1);
 
+    const destino = modoEdicion && colmenaId
+      ? '/colmenas'
+      : `/colmenas/${hiveId}/general`;
+
+    setModoEdicion(false);
+    navigate(destino);
+  }, 1000); // Mostrar toast antes de redirigir
 };
-
 
 
   return (

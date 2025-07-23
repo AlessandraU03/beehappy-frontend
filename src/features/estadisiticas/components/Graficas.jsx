@@ -32,7 +32,8 @@ function Graficas({ activeTab, estadisticas, loading, error }) {
         Estadísticas {tituloMap[activeTab]}
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
         {Object.entries(estadisticas).map(([sensorId, datos]) => (
           <DiaChart
             key={sensorId}
@@ -53,12 +54,26 @@ function Graficas({ activeTab, estadisticas, loading, error }) {
 }
 
 function calcularYDomain(datos) {
-  const valoresMin = datos.map((d) => d.valor_minimo);
-  const valoresMax = datos.map((d) => d.valor_maximo);
+  const valoresMin = datos.map(d => Number(d.valor_minimo)).filter(v => !isNaN(v));
+  const valoresMax = datos.map(d => Number(d.valor_maximo)).filter(v => !isNaN(v));
+
+  if (!valoresMin.length || !valoresMax.length) return [0, 1];
+
   const min = Math.min(...valoresMin);
   const max = Math.max(...valoresMax);
-  return [min * 0.9, max * 1.1];
+
+  const diferencia = max - min;
+
+  // Si solo hay un dato, o min y max son iguales o casi iguales
+  if (datos.length === 1 || diferencia < 1e-2) {
+    const margen = 1; // puedes ajustar este margen fijo si lo ves necesario
+    return [min - margen, max + margen];
+  }
+
+  // Rango normal con margen relativo
+  return [min - diferencia * 0.1, max + diferencia * 0.1];
 }
+
 
 function getUltimaFecha(estadisticas) {
   let ultimaFecha = null;

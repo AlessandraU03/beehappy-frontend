@@ -6,6 +6,7 @@ import { getColmenaById } from '../../colmenas/services/get_colmena_byID';
 import TabsAlertas from '../components/TabsAlertas';
 import { updateAlertaEstado } from '../services/update_alertas';
 import { useLocation } from 'react-router-dom';
+import ToastMessage from '../../../shared/components/Modals/ToastMessage';
 
 
 export default function AlertsDashboard() {
@@ -16,7 +17,8 @@ export default function AlertsDashboard() {
   const [error, setError] = useState(null);
   const location = useLocation();
 const variant = location.pathname.includes('/colmenas') ? 'compact' : 'default';
-
+const [toastVisible, setToastVisible] = useState(false);
+const [toastData, setToastData] = useState({ type: 'success', title: '', message: '' });
 
   const [activeTab, setActiveTab] = useState('pendientes');
 
@@ -53,24 +55,44 @@ const variant = location.pathname.includes('/colmenas') ? 'compact' : 'default';
     setActiveTab(tab);
   };
 
-  const handleCheck = async (id) => {
-    const alerta = alertas.find((a) => a.id === id);
-    if (!alerta) return;
+ const handleCheck = async (id) => {
+  const alerta = alertas.find((a) => a.id === id);
+  if (!alerta) return;
 
-    const nuevoEstado = alerta.estado === 'activa' ? 'resuelta' : 'activa';
+  const nuevoEstado = alerta.estado === 'activa' ? 'resuelta' : 'activa';
 
-    try {
-      await updateAlertaEstado(id, nuevoEstado);
+  try {
+    await updateAlertaEstado(id, nuevoEstado);
 
-      const nuevasAlertas = alertas.map((a) =>
-        a.id === id ? { ...a, estado: nuevoEstado, checked: nuevoEstado !== 'activa' } : a
-      );
+    const nuevasAlertas = alertas.map((a) =>
+      a.id === id ? { ...a, estado: nuevoEstado, checked: nuevoEstado !== 'activa' } : a
+    );
 
-      setAlertas(nuevasAlertas);
-    } catch (error) {
-      alert('No se pudo actualizar el estado de la alerta: ' + error.message);
-    }
-  };
+    setAlertas(nuevasAlertas);
+
+    // Muestra el toast
+    setToastData({
+      type: nuevoEstado === 'resuelta' ? 'success' : 'warning',
+      title: nuevoEstado === 'resuelta' ? 'Alerta Resuelta' : 'Alerta Activada',
+      message:
+        nuevoEstado === 'resuelta'
+          ? 'La alerta ha sido marcada como resuelta correctamente.'
+          : 'La alerta ha sido reactivada.',
+    });
+
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 4000); // Ocultar después de 4 segundos
+  } catch (error) {
+    setToastData({
+      type: 'error',
+      title: 'Error',
+      message: 'No se pudo actualizar el estado de la alerta: ' + error.message,
+    });
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 4000);
+  }
+};
+
 
   const alertasFiltradas = alertas.filter((alerta) =>
     activeTab === 'pendientes' ? alerta.estado === 'activa' : alerta.estado !== 'activa'
@@ -111,6 +133,15 @@ const variant = location.pathname.includes('/colmenas') ? 'compact' : 'default';
           ))}
         </div>
       )}
+      {toastVisible && (
+  <ToastMessage
+    type={toastData.type}
+    title={toastData.title}
+    message={toastData.message}
+    onClose={() => setToastVisible(false)}
+  />
+)}
+
     </div>
   );
 }

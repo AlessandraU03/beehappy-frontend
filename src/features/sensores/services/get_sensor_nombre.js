@@ -1,7 +1,9 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_SENSORES;
+
 export const obtenerIdSensorPorNombre = async (nombreSensor) => {
   const token = sessionStorage.getItem('auth_token');
 
-  const response = await fetch(`http://44.196.168.136:8080/api/v1/tipos-sensores/nombre/${nombreSensor}`, {
+  const response = await fetch(`${API_BASE_URL}/tipos-sensores/nombre/${nombreSensor}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

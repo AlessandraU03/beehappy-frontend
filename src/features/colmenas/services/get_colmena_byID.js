@@ -1,4 +1,5 @@
 import { sessionStorageService } from "../../../infrastructure/storage/sessionStorage";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_SENSORES;
 
 export const getColmenaById = async (id) => {
   const token = sessionStorageService.get('auth_token');
@@ -7,7 +8,7 @@ export const getColmenaById = async (id) => {
     throw new Error('Token no encontrado. Debes iniciar sesión.');
   }
 
-  const response = await fetch(`http://44.196.168.136:8080/api/v1/colmena/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/colmena/${id}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,

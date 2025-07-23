@@ -1,4 +1,5 @@
 import { sessionStorageService } from '../../../infrastructure/storage/sessionStorage';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_ESTADISTICAS;
 
 export const getEstadisticasSemana = async () => {
   const token = sessionStorageService.get('auth_token');
@@ -8,7 +9,7 @@ export const getEstadisticasSemana = async () => {
     throw new Error('Token o MAC de Raspberry no disponibles');
   }
 
-  const url = `http://44.194.210.138:8080/api/v1/estadisticas/semana?mac_raspberry=${encodeURIComponent(mac)}`;
+  const url = `${API_BASE_URL}/estadisticas/semana?mac_raspberry=${encodeURIComponent(mac)}`;
 
   const response = await fetch(url, {
     method: 'GET',

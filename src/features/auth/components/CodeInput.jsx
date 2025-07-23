@@ -21,7 +21,8 @@ export default function CodeInput({ value, onChange }) {
   };
 
   return (
-    <div className="flex flex-wrap justify-center gap-6 my-12 px-8 w-full">
+  <div className="flex justify-center gap-2 my-12 px-8 w-full  sm:flex-wrap">
+
       {[...Array(6)].map((_, i) => (
         <input
           key={i}
@@ -32,19 +33,22 @@ export default function CodeInput({ value, onChange }) {
           onChange={(e) => handleChange(e, i)}
           onKeyDown={(e) => handleKeyDown(e, i)}
           className="
-            w-20 h-20
-            text-center
-            text-5xl
-            font-bold
-            bg-white
-            border-b-2 border-gray-300
-            rounded-lg
-            focus:border-[#2A4D69]
-            focus:ring-2 focus:ring-[#2A4D69]/30
-            outline-none
-            transition-all duration-200 ease-in-out
-            shadow-md
-          "
+  w-8 h-8          /* Tamaño por defecto (para móviles) */
+  sm:w-20 sm:h-20     /* Tamaño grande a partir de sm (>= 640px) */
+  text-center
+  text-3xl sm:text-5xl
+  font-bold
+  text-[#1A2B4C]
+  bg-white
+  border-b-2 border-gray-300
+  rounded-lg
+  focus:border-[#2A4D69]
+  focus:ring-2 focus:ring-[#2A4D69]/30
+  outline-none
+  transition-all duration-200 ease-in-out
+  shadow-md
+"
+
           style={{ boxShadow: '0px 2px 5px rgba(0,0,0,0.15)' }}
         />
       ))}

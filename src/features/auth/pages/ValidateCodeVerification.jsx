@@ -45,7 +45,8 @@ export default function ValidateCodeVerification() {
       </button>
 
       {/* Contenedor principal */}
-      <div className="relative w-full max-w-3xl  p-6 sm:p-10 md:p-12 z-10">
+      <div className="relative w-full max-w-3xl pt-24 sm:pt-0 p-6 sm:p-10 md:p-12 z-10">
+
         <h2 className="text-[#013A55] text-2xl sm:text-3xl md:text-4xl font-poppins font-bold text-start mb-6 sm:mb-10">
           Ingresa tu correo electrónico:
         </h2>
@@ -90,15 +91,9 @@ export default function ValidateCodeVerification() {
                     onResend={handleResendCode}
                   />
 
-                  <p className="text-base sm:text-lg text-center text-gray-800">
-                    Intentos restantes: {3 - attempts}
-                  </p>
+                 
 
-                  {codeExpired && (
-                    <p className="text-base sm:text-lg text-red-500 text-center">
-                      El código expiró, por favor reenvía uno nuevo.
-                    </p>
-                  )}
+                 
                 </>
               )}
             </>

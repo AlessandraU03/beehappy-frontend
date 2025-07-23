@@ -1,11 +1,12 @@
 // services/updateEstadoColmena.js
 import axios from 'axios';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_SENSORES;
 
 export const updateEstadoColmena = async (id_colmena, nuevoEstado) => {
   const token = sessionStorage.getItem('token'); // O donde tengas almacenado el token
 
   const response = await axios.put(
-    `http://44.196.168.136:8080/api/v1/colmena/${id_colmena}/estado`,
+    `${API_BASE_URL}/colmena/${id_colmena}/estado`,
     { estado: nuevoEstado },
     {
       headers: {

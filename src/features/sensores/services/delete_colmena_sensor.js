@@ -1,9 +1,10 @@
 import { sessionStorageService } from "../../../infrastructure/storage/sessionStorage";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_SENSORES;
 
 export const deleteColmenaSensor = async (idRelacion) => {
   const token = sessionStorageService.get('auth_token');
 
-  const res = await fetch(`http://44.196.168.136:8080/api/v1/colmena-sensores/${idRelacion}`, {
+  const res = await fetch(`${API_BASE_URL}/colmena-sensores/${idRelacion}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
