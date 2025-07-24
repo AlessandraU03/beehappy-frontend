@@ -17,7 +17,7 @@ export const connectToHiveWS = (mac_raspberry) => {
     socket.close();
   }
 
-  const wsUrl = `wss://3.224.227.15:8080/ws?account=${mac_raspberry}`;
+  const wsUrl = `ws://3.224.227.15:8080/ws?account=${mac_raspberry}`;
   socket = new WebSocket(wsUrl);
 
   socket.onopen = () => {
