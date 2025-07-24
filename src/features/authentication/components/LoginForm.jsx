@@ -181,7 +181,7 @@ export default function LoginForm() {
 
         <div className="mt-auto flex items-end">
           <img
-            src="/Group 1.png"
+            src="/Group1.png"
             alt="Abeja decorativa"
             className="w-24 animate-float"
           />
