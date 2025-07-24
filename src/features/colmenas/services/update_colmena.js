@@ -1,10 +1,10 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_SENSORES;
 
 export const updateColmena = async (id, data) => {
-     const token = sessionStorage.getItem('token'); // Asegúrate de que esté guardado
-  const url = `${API_BASE_URL}/colmena`;
+     const token = sessionStorage.getItem('auth_token'); // Asegúrate de que esté guardado
 
-  const response = await fetch(`${url}/${id}`, {
+
+  const response = await fetch(`${API_BASE_URL}/colmena/${id}`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`,

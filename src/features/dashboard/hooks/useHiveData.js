@@ -4,28 +4,37 @@ import { getAlertasByUsuario } from '../../alertas/services/get_alertas_by_usuar
 
 const useHiveData = () => {
   const [loading, setLoading] = useState(true);
+
   const [summary, setSummary] = useState({
     registered: 0,
     active: 0,
-    pending: 0,
-    completed: 0,
+    pending: 0,     // colmenas en estado "pending"
+    completed: 0,   // colmenas en estado "completed"
   });
+
+  const [alertStats, setAlertStats] = useState({
+    pending: 0,     // alertas pendientes/activas
+    completed: 0,   // alertas resueltas/completadas
+  });
+
   const [alerts, setAlerts] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Obtener resumen de colmenas
         const hiveSummary = await getHivesSummary();
 
-        // Obtener alertas del usuario
-        const alertas = await getAlertasByUsuario();
+        const alertasResponse = await getAlertasByUsuario();
+        const alertas = Array.isArray(alertasResponse) ? alertasResponse : [];
 
-        // Contar alertas por estado
-        const pendingCount = alertas.filter(a => a.estado === 'pendiente' || a.estado === 'activa').length;
-        const completedCount = alertas.filter(a => a.estado === 'completada' || a.estado === 'resuelta').length;
+        const pendingCount = alertas.filter(a =>
+          a.estado === 'pendiente' || a.estado === 'activa'
+        ).length;
 
-        // Armar últimas 3 alertas ordenadas por fecha de generación descendente
+        const completedCount = alertas.filter(a =>
+          a.estado === 'completada' || a.estado === 'resuelta'
+        ).length;
+
         const ultimas3 = alertas
           .sort((a, b) => new Date(b.fecha_generacion) - new Date(a.fecha_generacion))
           .slice(0, 3)
@@ -39,17 +48,13 @@ const useHiveData = () => {
             };
           });
 
-        // Actualizar el summary incluyendo alertas
-        setSummary({
-          ...hiveSummary,
-          pending: pendingCount,
-          completed: completedCount,
-        });
-
+        setSummary(hiveSummary); // ✔️ colmenas
+        setAlertStats({ pending: pendingCount, completed: completedCount }); // ✔️ alertas
         setAlerts(ultimas3);
       } catch (error) {
         console.error("Error cargando datos:", error);
         setAlerts([]);
+        setAlertStats({ pending: 0, completed: 0 });
       } finally {
         setLoading(false);
       }
@@ -58,7 +63,7 @@ const useHiveData = () => {
     fetchData();
   }, []);
 
-  return { loading, summary, alerts };
+  return { loading, summary, alertStats, alerts };
 };
 
 export default useHiveData;

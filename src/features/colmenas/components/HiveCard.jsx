@@ -16,7 +16,7 @@ const HiveCard = ({ hive, onClick }) => {
         <h3 className="text-xl sm:text-2xl font-semibold mb-1 sm:mb-2">Colmena {hive.id}</h3>
         <p className="text-sm sm:text-base mb-1">Área: {hive.area_ubicacion}</p>
         <p className="text-sm sm:text-base mb-2">Tipo: {hive.tipo_colmena}</p>
-        <p className="text-xs sm:text-sm">Humedad, Peso, Sonido, Temperatura</p>
+        <p className="text-xs sm:text-sm">Humedad, Peso, Sonido, Temperatura, Piezoelectrico</p>
       </div>
     </div>
   );

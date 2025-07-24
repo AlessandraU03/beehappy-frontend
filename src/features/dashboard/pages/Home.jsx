@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import HiveSummaryCard from '../components/HiveSummaryCard';
 import AlertList from '../components/AlertList';
 import { useAuth } from '../../../app/providers/authProvider';
 import useHiveData from '../hooks/useHiveData';
 
-
 const Home = () => {
-const { loading, summary, alerts } = useHiveData();
-
+  const { loading, summary, alertStats, alerts } = useHiveData();
   const navigate = useNavigate();
   const { logout } = useAuth();
-
- 
 
   if (loading) return <div className="text-white p-6">Cargando...</div>;
 
@@ -28,8 +24,8 @@ const { loading, summary, alerts } = useHiveData();
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <HiveSummaryCard number={summary.registered} label="Colmenas registradas" />
             <HiveSummaryCard number={summary.active} label="Colmenas activas" />
-            <HiveSummaryCard number={summary.pending} label="Alertas pendientes" />
-            <HiveSummaryCard number={summary.completed} label="Alertas completadas" />
+            <HiveSummaryCard number={alertStats.pending} label="Alertas pendientes" />
+            <HiveSummaryCard number={alertStats.completed} label="Alertas completadas" />
           </div>
 
           <div className="w-full overflow-auto">
