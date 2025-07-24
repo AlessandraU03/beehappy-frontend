@@ -14,6 +14,7 @@ const Input = ({
   labelClassName = '',
   inputClassName = '',
   containerClassName = '',
+  disabled = false, // 👈 Añadir prop disabled
 }) => {
   const baseInputClasses = `
     w-full px-4 py-3 rounded-md text-base sm:text-lg font-semibold outline-none box-border
@@ -22,12 +23,13 @@ const Input = ({
       ? 'border-[#FF6347] focus:border-[#FF6347] focus:ring-2 focus:ring-[#FF6347]/30'
       : 'border-white focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]/30'
     }
-    placeholder-[#B0C4DE]
+    placeholder-[#9aabc2]
+    ${disabled ? 'bg-[#8da3c1] cursor-not-allowed text-gray-700' : ''}
   `;
 
   const inputTextColor = type === 'select'
     ? 'text-black bg-white'
-    : 'text-white bg-[#0C3F72]'; // mejor visibilidad en fondos oscuros
+    : 'text-white bg-[#0C3F72]';
 
   const finalInputClasses = `${baseInputClasses} ${inputTextColor} ${inputClassName}`;
 
@@ -50,6 +52,7 @@ const Input = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          disabled={disabled} // ✅ aplicar disabled
           className={finalInputClasses}
         />
       ) : type === 'select' ? (
@@ -58,6 +61,7 @@ const Input = ({
           name={name}
           value={value}
           onChange={onChange}
+          disabled={disabled} // ✅ aplicar disabled
           className={finalInputClasses}
         >
           <option value="" disabled className="text-gray-400">
@@ -77,6 +81,7 @@ const Input = ({
             type={type}
             checked={checked}
             onChange={onChange}
+            disabled={disabled} // ✅ aplicar disabled
             className={`form-${type} h-5 w-5 text-yellow-500 bg-[#1A2B4C] border-gray-600 rounded focus:ring-yellow-500 ${inputClassName}`}
           />
           <label htmlFor={name} className={`text-white text-sm sm:text-base ${labelClassName}`}>
@@ -91,6 +96,7 @@ const Input = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          disabled={disabled} // ✅ aplicar disabled
           className={finalInputClasses}
         />
       )}

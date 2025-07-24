@@ -244,13 +244,15 @@ return (
               labelClassName="text-white text-lg"
             />
             <Input
-              label="MAC de la Raspberry"
-              name="mac"
-              value={mac}
-              onChange={(e) => setMac(e.target.value)}
-              placeholder="00:00:00:00:00:00"
-              labelClassName="text-white text-lg"
-            />
+  label="MAC de la Raspberry"
+  name="mac"
+  value={mac}
+  onChange={(e) => setMac(e.target.value)}
+  placeholder="00:00:00:00:00:00"
+  labelClassName="text-white text-lg"
+  disabled={modoEdicion}
+/>
+
             <Input
               label="Tipo de colmena"
               name="tipoColmena"
