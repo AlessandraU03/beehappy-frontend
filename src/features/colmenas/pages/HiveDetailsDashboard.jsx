@@ -184,7 +184,17 @@ function HiveDetailDashboard() {
                   <span className={`text-2xl font-semibold ${hiveInfo.estado === 'activo' ? 'text-green-400' : 'text-red-400'}`}>
                     {hiveInfo.estado === 'activo' ? 'Activo' : 'Inactivo'}
                   </span>
+                  
                 </div>
+                    
+                  <div className="mt-4 text-lg text-white">
+                    <p>
+                      A continuación se muestran los <span className="text-yellow-400 font-semibold">valores recomendados</span> para cada sensor 
+                      que permiten monitorear el estado ideal de la colmena. 
+                    </p>
+                  </div>
+                
+
               </>
             )}
           </div>
@@ -217,7 +227,8 @@ function HiveDetailDashboard() {
             </div>
 
             {activeTab === 'general' && (
-              <div className="w-full md:w-[480px]">
+              <div className="w-full mt-14 md:w-[540px]">
+          
                 <SensorCard
                   label="Peso"
                   value={getSensorCalibratedValue('peso')}

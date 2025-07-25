@@ -43,7 +43,7 @@ export default function AlertaCard({
           {/* Indicador de estado "Activa" / "Resuelta" */}
           <div className="flex items-center gap-2 bg-[#062343] text-white px-3 py-1 rounded-md text-xs sm:text-sm font-semibold whitespace-nowrap self-end sm:self-start">
             <AlertCircle className="w-4 h-4 shrink-0" />
-            {checked ? 'Resuelta' : 'Activa'}
+            {checked ? 'Resuelta' : 'Pendiente'}
           </div>
         </div>
       </div>
@@ -86,7 +86,10 @@ export default function AlertaCard({
                 onChange={onCheckedChange}
                 aria-label={`Marcar alerta ${estado === 'activa' ? 'resuelta' : 'activa'}`}
               />
-              <span className="text-sm font-medium whitespace-nowrap">{checked }</span>
+              <span className="text-sm font-medium whitespace-nowrap">
+  {checked ? 'Resuelta' : 'Marcar como resuelta'}
+</span>
+
             </label>
           </div>
         </div>

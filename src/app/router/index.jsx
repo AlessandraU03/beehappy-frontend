@@ -23,6 +23,7 @@ import EstadisticasDashboard from '../../features/estadisiticas/pages/Estadistic
 import AlertsDashboard from '../../features/alertas/pages/AlertasDashboard';
 import MonitoreoGraf from '../../features/monitoreo/components/Monitoreo_Graf';
 import AsociarSensoresForm from '../../features/sensores/components/AsociarSensoresForm';
+import UserAlertsDashboard from '../../features/alertas/pages/UserAlertsDashboard';
 
 export default function AppRouter() {
   const { isAuthenticated } = useAuth();
@@ -44,7 +45,7 @@ export default function AppRouter() {
 
           {/* Rutas generales */}
           <Route path="/estadisticas" element={<Estadisticas />} />
-          <Route path="/alertas" element={<Alertas />} />
+          <Route path="/alertas" element={<UserAlertsDashboard />} />
 
           {/* Monitoreo - lista */}
           <Route path="/monitoreo" element={<Monitoreo />} />
