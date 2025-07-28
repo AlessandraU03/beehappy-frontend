@@ -106,7 +106,7 @@ export default function UserAlertsDashboard() {
       {loading ? (
         <p className="text-white">Cargando alertas...</p>
       ) : error ? (
-        <p className="text-red-500">❌ {error}</p>
+        <p className="text-red-500">❌ {'No hay Alertas '}</p>
       ) : alertasFiltradas.length === 0 ? (
         <p className="text-white">
           No hay alertas {activeTab === 'pendientes' ? 'activas' : 'resueltas'}.
